@@ -3,7 +3,7 @@
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls.  <b>You will NOT need to incoorporate this into GearSwap. This is stand-alone.</b>
 
 ## Features
-* **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
+* **Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 * **Three-Window UI:** 
     * **Gear Stats:** Shows the total contribution of stats from your currently equipped gear.
     * **True Totals:** Eventually... This is just gear stats and checkparam for now.  I'm working on it.
