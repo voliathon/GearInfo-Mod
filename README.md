@@ -12,7 +12,7 @@ GearInfo is a lightweight, high-performance Windower addon designed to track and
 * **Smart Filtering:** Handles complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 
 <div align="center">
-  <img src="cursna-example.png" alt="Cursna Set" />
+  <img src="curs-example.png" alt="Cursna Set" />
   <img src="phalanx-example.png" alt="Phalanx Set" />
   <img src="savageblade-example.png" alt="Savage Set" />
 </div>
