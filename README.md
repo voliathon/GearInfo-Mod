@@ -12,9 +12,9 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
 
 
 <div align="center">
-  <img src="curs-example.png" alt="Cursna Set" />
-  <img src="phalanx-example.png" alt="Phalanx Set" />
-  <img src="savageblade-example.png" alt="Savage Set" />
+  <img src="example1.png" />
+  <img src="example2.png" />
+  <img src="example3.png" />
 </div>
 
 ## Commands
