@@ -6,7 +6,7 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
 * **Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 * **Three-Window UI:** 
     * **Gear Stats:** Shows the total contribution of stats from your currently equipped gear.
-    * **True Totals:** Eventually... This is just gear stats and checkparam for now.  I'm working on it.
+    * **True Totals:** /checkparam for now.  I will contemplate stuff like haste, attack cap, accuracy cap in the future...
     * **Detailed Log:** A 3-column breakdown showing exactly which items are contributing to your tracked stats.
 * **Persistence:** All UI windows are draggable and will remember their position on your screen per character.
 
