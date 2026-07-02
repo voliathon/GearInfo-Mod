@@ -1,6 +1,6 @@
 # GearInfo
 
-GearInfo is a lightweight, high-performance Windower addon designed to track and display your equipment statistics in real-time. Unlike older, hardcoded addons, GearInfo uses dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls.  You will NOT need to incoorporate this into GearSwap. This is stand-alone.
+GearInfo is a lightweight, high-performance Windower addon designed to track and display your equipment statistics in real-time. Unlike older, hardcoded addons, GearInfo uses dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls.  <b>You will NOT need to incoorporate this into GearSwap. This is stand-alone.</b>
 
 ## Features
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data.
