@@ -27,26 +27,17 @@ local default_log_settings = {
     text = { size = 9, font = 'Consolas', alpha = 255, red = 200, green = 200, blue = 200 }
 }
 
-local default_char_settings = {
-    pos = { x = 200, y = 400 },
-    bg = { alpha = 150, red = 50, green = 0, blue = 0, visible = true },
-    flags = { draggable = true, bold = true },
-    text = { size = 10, font = 'Consolas', alpha = 255, red = 255, green = 255, blue = 255 }
-}
-
 local settings = config.load('data\\settings.xml', default_settings)
 local log_settings = config.load('data\\log_settings.xml', default_log_settings)
-local char_settings = config.load('data\\char_settings.xml', default_char_settings)
 
 local display = texts.new(settings)
 local log_display = texts.new(log_settings)
-local char_display = texts.new(char_settings)
 
 local show_log = false
 local equip_update_timer = 0
 
 -- ==============================================================================
--- 2. Ordered Stat Sequence (Alphabetized for User Editing)
+-- 2. Ordered Stat Sequence & UI Layout Groups
 -- ==============================================================================
 local stat_sequence = {
     { stat = 'Accuracy', patterns = {'"?accuracy"?%s*%+?(%d+)', '"?acc%."?%s*%+?(%d+)'} }, 
@@ -60,7 +51,8 @@ local stat_sequence = {
     { stat = 'Cure Potency II', patterns = {'"?cure"? potency ii%s*%+?(%d+)%%?'} },
     { stat = 'Cure Spellcasting Time', patterns = {'"?cure"? spellcasting time%s*%-?(%d+)%%?'} },
     { stat = 'Cursna', patterns = {'"?cursna"?%s*%+?(%d+)'} },
-    { stat = 'Damage Taken', patterns = {'"?damage taken"?%s*%-?(%d+)%%?', '"?dt"?%s*%-?(%d+)%%?'} }, 
+    { stat = 'Damage Taken', patterns = {'"?damage taken"?%s*%-?(%d+)%%?', '"?dt"?%s*%-?(%d+)%%?'} },
+    { stat = 'Defense', patterns = {'"?defense"?%s*%+?(%d+)', '"?def%."?%s*%+?(%d+)', '"?def"?%s*:%s*(%d+)', '"?def"?%s*%+?(%d+)'} }, 
     { stat = 'Double Attack', patterns = {'"?double attack"?%s*%+?(%d+)%%?', '"?dbl%.%s*atk%."?%s*%+?(%d+)%%?'} },
     { stat = 'Double Shot', patterns = {'"?double shot"?%s*%+?(%d+)%%?'} },
     { stat = 'Double Shot Damage', patterns = {'"?double shot"? damage%s*%+?(%d+)', '"?double shot dmg%."?%s*%+?(%d+)'} },
@@ -73,7 +65,9 @@ local stat_sequence = {
     { stat = 'Enmity', patterns = {'"?enmity"?%s*([%+%-]%s*%d+)'} }, 
     { stat = 'Evasion', patterns = {'"?evasion"?%s*%+?(%d+)', '"?eva%."?%s*%+?(%d+)'} },
     { stat = 'Fast Cast', patterns = {'"?fast cast"?%s*%+?(%d+)%%?'} },
+    { stat = 'HP', patterns = {'"?hp"?%s*%+?(%d+)'} },
     { stat = 'Haste', patterns = {'"?haste"?%s*%+?(%d+)%%?'} },
+    { stat = 'MP', patterns = {'"?mp"?%s*%+?(%d+)'} },
     { stat = 'Magic Accuracy', patterns = {'"?mag%.%s*acc%.?"?%s*%+?(%d+)', '"?magic accuracy"?%s*%+?(%d+)', '"?m%.acc%."?%s*%+?(%d+)'} },
     { stat = 'Magic Attack Bonus', patterns = {'"?mag%.%s*atk%.%s*bns%."?%s*%+?(%d+)', '"?magic attack bonus"?%s*%+?(%d+)', '"?magic atk%. bonus"?%s*%+?(%d+)'} },
     { stat = 'Magic Burst Damage', patterns = {'"?magic burst damage"?%s*%+?(%d+)%%?', '"?magic burst dmg%."?%s*%+?(%d+)%%?'} },
@@ -92,6 +86,7 @@ local stat_sequence = {
     { stat = 'Quadruple Attack', patterns = {'"?quadruple attack"?%s*%+?(%d+)%%?', '"?quad%.%s*atk%."?%s*%+?(%d+)%%?'} },
     { stat = 'Quick Magic', patterns = {'"?quick magic"?%s*%+?(%d+)%%?'} },
     { stat = 'Ranged Accuracy', patterns = {'"?rng%.%s*acc%.?"?%s*%+?(%d+)', '"?ranged accuracy"?%s*%+?(%d+)'} },
+    { stat = 'Ranged Attack', patterns = {'"?rng%.%s*atk%.?"?%s*%+?(%d+)', '"?ranged attack"?%s*%+?(%d+)'} },
     { stat = 'Rapid Shot', patterns = {'"?rapid shot"?%s*%+?(%d+)'} },
     { stat = 'Refresh', patterns = {'"?refresh"?%s*%+?(%d+)'} },
     { stat = 'Refresh Potency', patterns = {'"?refresh"? potency%s*%+?(%d+)'} },
@@ -114,6 +109,33 @@ local stat_sequence = {
     { stat = 'Weapon Skill Damage', patterns = {'"?weapon skill damage"?%s*%+?(%d+)%%?'} }
 }
 
+-- UI Rendering Sections
+local section1_order = {
+    'HP', 'Accuracy', 'Attack', 'Defense', 'Ranged Accuracy', 'Ranged Attack', 'Evasion', 'Haste', 'Enmity', 
+    'Damage Taken', 'Magic Damage Taken', 'Physical Damage Taken', 'Magic Evasion', 
+    'Magic Def. Bonus', 'Phalanx', 'Physical Damage Limit', 'Regain'
+}
+
+local section2_order = {
+    'MP', 'Fast Cast', 'Magic Accuracy', 'Magic Attack Bonus', 'Magic Burst Damage', 
+    'Magic Burst Damage II', 'Magic Critical Hit Rate', 'Magic Damage', 'Refresh', 'Refresh Potency'
+}
+
+local section4_order = { 'Movement Speed' }
+
+-- Dynamically construct section 3 (everything else)
+local section3_order = {}
+local function is_in_list(val, lst)
+    for _, v in ipairs(lst) do if v == val then return true end end
+    return false
+end
+
+for _, s in ipairs(stat_sequence) do
+    if not is_in_list(s.stat, section1_order) and not is_in_list(s.stat, section2_order) and not is_in_list(s.stat, section4_order) then
+        table.insert(section3_order, s.stat)
+    end
+end
+
 -- Create a background copy sorted by string length to ensure specific patterns are parsed before broad ones
 local parse_sequence = {}
 for _, v in ipairs(stat_sequence) do table.insert(parse_sequence, v) end
@@ -133,9 +155,18 @@ for _, slot in ipairs(equip_slots_left) do table.insert(equip_slots, slot) end
 for _, slot in ipairs(equip_slots_center) do table.insert(equip_slots, slot) end
 for _, slot in ipairs(equip_slots_right) do table.insert(equip_slots, slot) end
 
+-- Map specific stats to their /checkparam equivalents
+local special_stats_map = {
+    ['Accuracy'] = 'Primary Accuracy',
+    ['Attack'] = 'Primary Attack',
+    ['Ranged Accuracy'] = 'Ranged Accuracy',
+    ['Ranged Attack'] = 'Ranged Attack',
+    ['Evasion'] = 'Evasion',
+    ['Defense'] = 'Defense'
+}
+
 local char_stats = {
     ['Primary Accuracy'] = 0, ['Primary Attack'] = 0,
-    ['Secondary Accuracy'] = 0, ['Secondary Attack'] = 0,
     ['Ranged Accuracy'] = 0, ['Ranged Attack'] = 0,
     ['Evasion'] = 0, ['Defense'] = 0
 }
@@ -148,7 +179,6 @@ local function calculate_gear_stats()
     local totals = {}
     local item_details = {} 
     
-    -- Initialize totals using the alphabetized list
     for _, s in ipairs(stat_sequence) do totals[s.stat] = 0 end
 
     local equipment = windower.ffxi.get_items().equipment
@@ -181,7 +211,6 @@ local function calculate_gear_stats()
                 for _, text_line in ipairs(strings_to_parse) do
                     local current_line = text_line:lower() 
                     
-                    -- Use the length-sorted sequence for accurate parsing
                     for _, stat_data in ipairs(parse_sequence) do
                         for _, pattern in ipairs(stat_data.patterns) do
                             local match = string.match(current_line, pattern)
@@ -190,6 +219,11 @@ local function calculate_gear_stats()
                                 local val = tonumber(clean_match)
                                 
                                 if val then
+                                    -- Special case logic: if it's Enmity, we captured the sign (+ or -)
+                                    if stat_data.stat == 'Enmity' then
+                                        -- It already inherently knows if it is negative from the match block
+                                    end
+                                    
                                     totals[stat_data.stat] = totals[stat_data.stat] + val
                                     current_item_stats[stat_data.stat] = (current_item_stats[stat_data.stat] or 0) + val
                                     current_line = string.gsub(current_line, pattern, "", 1)
@@ -214,13 +248,50 @@ end
 local function update_ui()
     local current_stats, item_details = calculate_gear_stats()
     
-    -- Main Total UI uses the alphabetized stat_sequence
-    local ui_text = " --- Gear Stats Only ---\n"
-    for _, s in ipairs(stat_sequence) do
-        if current_stats[s.stat] ~= 0 then
-            ui_text = ui_text .. string.format(" %s: %d\n", s.stat, current_stats[s.stat])
+    local ui_text = " --- Gear Statistics ---\n"
+    
+    local function get_section_text(stat_list)
+        local lines = {}
+        for _, stat in ipairs(stat_list) do
+            local gear_val = current_stats[stat] or 0
+            
+            if special_stats_map[stat] then
+                local char_val = char_stats[special_stats_map[stat]] or 0
+                -- \cs(0,255,0) renders the specific string green in windower UI, \cr clears the color
+                if gear_val ~= 0 or char_val ~= 0 then
+                    table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr", stat, char_val, gear_val))
+                end
+            else
+                if gear_val ~= 0 then
+                    table.insert(lines, string.format(" %s: %d", stat, gear_val))
+                end
+            end
         end
+        if #lines > 0 then
+            return table.concat(lines, "\n")
+        end
+        return nil
     end
+
+    local blocks = {}
+    local b1 = get_section_text(section1_order)
+    if b1 then table.insert(blocks, b1) end
+    
+    local b2 = get_section_text(section2_order)
+    if b2 then table.insert(blocks, b2) end
+    
+    local b3 = get_section_text(section3_order)
+    if b3 then table.insert(blocks, b3) end
+    
+    local b4 = get_section_text(section4_order)
+    if b4 then table.insert(blocks, b4) end
+
+    if #blocks > 0 then
+        ui_text = ui_text .. table.concat(blocks, "\n\n") .. "\n"
+    else
+        ui_text = ui_text .. " No stats tracked.\n"
+    end
+
     display:text(ui_text)
     display:show()
     
@@ -259,25 +330,6 @@ local function update_ui()
     end
 end
 
-local function update_char_ui()
-    local char_text = " --- True Character Totals ---\n"
-    local render_order = {
-        'Primary Accuracy', 'Primary Attack', 
-        'Secondary Accuracy', 'Secondary Attack', 
-        'Ranged Accuracy', 'Ranged Attack', 
-        'Evasion', 'Defense'
-    }
-    
-    for _, stat in ipairs(render_order) do
-        if char_stats[stat] > 0 then
-            char_text = char_text .. string.format(" %s: %d\n", stat, char_stats[stat])
-        end
-    end
-    
-    char_display:text(char_text)
-    char_display:show()
-end
-
 local function refresh_all()
     update_ui()
     checkparam_active = true
@@ -305,36 +357,37 @@ windower.register_event('load', 'login', 'zone change', refresh_all)
 windower.register_event('incoming text', function(original, modified, original_mode, modified_mode, blocked)
     if not checkparam_active then return end
 
-    local parsed_something = false
-
-    local pacc, patk = original:match('Primary Accuracy:%s*(%d+)%s*Primary Attack:%s*(%d+)')
-    if pacc and patk then
-        char_stats['Primary Accuracy'] = tonumber(pacc); char_stats['Primary Attack'] = tonumber(patk)
-        parsed_something = true
-    end
-
-    local sacc, satk = original:match('Secondary Accuracy:%s*(%d+)%s*Secondary Attack:%s*(%d+)')
-    if sacc and satk then
-        char_stats['Secondary Accuracy'] = tonumber(sacc); char_stats['Secondary Attack'] = tonumber(satk)
-        parsed_something = true
-    end
-
-    local racc, ratk = original:match('Ranged Accuracy:%s*(%d+)%s*Ranged Attack:%s*(%d+)')
-    if racc and ratk then
-        char_stats['Ranged Accuracy'] = tonumber(racc); char_stats['Ranged Attack'] = tonumber(ratk)
-        parsed_something = true
-    end
-
-    local eva, def = original:match('Evasion:%s*(%d+)%s*Defense:%s*(%d+)')
-    if eva and def then
-        char_stats['Evasion'] = tonumber(eva); char_stats['Defense'] = tonumber(def)
-        parsed_something = true
+    -- FFXI chat strings are notoriously packed with invisible color/translation control bytes.
+    -- The [^0-9] parameter forces the regex to simply jump past all control bytes to extract the raw digits.
+    if original:match('Primary Accuracy') then
+        local pacc, patk = original:match('Primary Accuracy[^0-9]*(%d+)[^0-9]*Primary Attack[^0-9]*(%d+)')
+        if pacc and patk then
+            char_stats['Primary Accuracy'] = tonumber(pacc)
+            char_stats['Primary Attack'] = tonumber(patk)
+        end
+        return true -- Block chat log spam
+        
+    elseif original:match('Secondary Accuracy') then
+        return true -- Block chat log spam
+        
+    elseif original:match('Ranged Accuracy') then
+        local racc, ratk = original:match('Ranged Accuracy[^0-9]*(%d+)[^0-9]*Ranged Attack[^0-9]*(%d+)')
+        if racc and ratk then 
+            char_stats['Ranged Accuracy'] = tonumber(racc)
+            char_stats['Ranged Attack'] = tonumber(ratk)
+        end
+        return true
+        
+    elseif original:match('Evasion') then
+        local eva, def = original:match('Evasion[^0-9]*(%d+)[^0-9]*Defense[^0-9]*(%d+)')
+        if eva and def then 
+            char_stats['Evasion'] = tonumber(eva)
+            char_stats['Defense'] = tonumber(def)
+        end
+        
         checkparam_active = false
-    end
-
-    if parsed_something then
-        update_char_ui()
-        return true 
+        update_ui()
+        return true
     end
 end)
 
@@ -346,27 +399,19 @@ windower.register_event('addon command', function(command, ...)
     
     if command == 'refresh' then
         refresh_all()
-        windower.add_to_chat(207, 'GearInfo: Refreshed all stats.')
-        
     elseif command == 'log' then
         show_log = not show_log
         update_ui()
-        windower.add_to_chat(207, 'GearInfo: Detailed log is now ' .. (show_log and 'ON' or 'OFF'))
-        
     elseif command == 'help' then
         windower.add_to_chat(207, ' --- GearInfo v1.0.0 Help ---')
         windower.add_to_chat(207, ' //gi refresh : Manually refreshes the UI and pulls new character stats.')
         windower.add_to_chat(207, ' //gi log     : Toggles the detailed item-by-item breakdown window.')
         windower.add_to_chat(207, ' //gi help    : Displays this help menu.')
         windower.add_to_chat(207, ' Note: You can click and drag the UI windows anywhere on your screen!')
-        
-    else
-        windower.add_to_chat(207, 'GearInfo: Unknown command. Type //gi help for a list of commands.')
     end
 end)
 
 windower.register_event('unload', function()
     config.save(settings, 'all')
     config.save(log_settings, 'all')
-    config.save(char_settings, 'all')
 end)
