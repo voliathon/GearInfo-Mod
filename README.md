@@ -11,6 +11,10 @@ GearInfo is a lightweight, high-performance Windower addon designed to track and
 * **Persistence:** All UI windows are draggable and will remember their position on your screen per character.
 * **Smart Filtering:** Handles complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 
+<div align="center">
+  <img src="example.png" alt="GearInfo UI" />
+</div>
+
 ## Commands
 Type the following into your FFXI chat log:
 
