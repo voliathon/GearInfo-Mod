@@ -109,15 +109,15 @@ local stat_sequence = {
     { stat = 'Weapon Skill Damage', patterns = {'"?weapon skill damage"?%s*%+?(%d+)%%?'} }
 }
 
--- UI Rendering Sections
+-- UI Rendering Sections (Alphabetized)
 local section1_order = {
-    'HP', 'Accuracy', 'Attack', 'Defense', 'Ranged Accuracy', 'Ranged Attack', 'Evasion', 'Haste', 'Enmity', 
-    'Damage Taken', 'Magic Damage Taken', 'Physical Damage Taken', 'Magic Evasion', 
-    'Magic Def. Bonus', 'Phalanx', 'Physical Damage Limit', 'Regain'
+    'Accuracy', 'Attack', 'Damage Taken', 'Defense', 'Enmity', 'Evasion', 'HP', 'Haste', 
+    'Magic Damage Taken', 'Magic Def. Bonus', 'Magic Evasion', 'Phalanx', 
+    'Physical Damage Limit', 'Physical Damage Taken', 'Ranged Accuracy', 'Ranged Attack', 'Regain'
 }
 
 local section2_order = {
-    'MP', 'Fast Cast', 'Magic Accuracy', 'Magic Attack Bonus', 'Magic Burst Damage', 
+    'Fast Cast', 'MP', 'Magic Accuracy', 'Magic Attack Bonus', 'Magic Burst Damage', 
     'Magic Burst Damage II', 'Magic Critical Hit Rate', 'Magic Damage', 'Refresh', 'Refresh Potency'
 }
 
@@ -219,11 +219,6 @@ local function calculate_gear_stats()
                                 local val = tonumber(clean_match)
                                 
                                 if val then
-                                    -- Special case logic: if it's Enmity, we captured the sign (+ or -)
-                                    if stat_data.stat == 'Enmity' then
-                                        -- It already inherently knows if it is negative from the match block
-                                    end
-                                    
                                     totals[stat_data.stat] = totals[stat_data.stat] + val
                                     current_item_stats[stat_data.stat] = (current_item_stats[stat_data.stat] or 0) + val
                                     current_line = string.gsub(current_line, pattern, "", 1)
@@ -257,7 +252,6 @@ local function update_ui()
             
             if special_stats_map[stat] then
                 local char_val = char_stats[special_stats_map[stat]] or 0
-                -- \cs(0,255,0) renders the specific string green in windower UI, \cr clears the color
                 if gear_val ~= 0 or char_val ~= 0 then
                     table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr", stat, char_val, gear_val))
                 end
@@ -356,19 +350,30 @@ windower.register_event('load', 'login', 'zone change', refresh_all)
 
 windower.register_event('incoming text', function(original, modified, original_mode, modified_mode, blocked)
     if not checkparam_active then return end
+    
+    local player = windower.ffxi.get_player()
+    local name = player and player.name or ""
 
-    -- FFXI chat strings are notoriously packed with invisible color/translation control bytes.
-    -- The [^0-9] parameter forces the regex to simply jump past all control bytes to extract the raw digits.
+    -- Block extra /checkparam chat lines
+    if original:match('Average item level:') then 
+        return true 
+    elseif original:match('Auxiliary Accuracy:') then 
+        return true 
+    elseif name ~= "" and original:match('^' .. name .. ':') then 
+        return true 
+    end
+
+    -- Process main stat lines and block them from chat
     if original:match('Primary Accuracy') then
         local pacc, patk = original:match('Primary Accuracy[^0-9]*(%d+)[^0-9]*Primary Attack[^0-9]*(%d+)')
         if pacc and patk then
             char_stats['Primary Accuracy'] = tonumber(pacc)
             char_stats['Primary Attack'] = tonumber(patk)
         end
-        return true -- Block chat log spam
+        return true 
         
     elseif original:match('Secondary Accuracy') then
-        return true -- Block chat log spam
+        return true 
         
     elseif original:match('Ranged Accuracy') then
         local racc, ratk = original:match('Ranged Accuracy[^0-9]*(%d+)[^0-9]*Ranged Attack[^0-9]*(%d+)')
