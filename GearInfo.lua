@@ -270,7 +270,7 @@ end
 local function update_ui()
     local current_stats, item_details = calculate_gear_stats()
     
-    local ui_text = " --- Gear Statistics --- (//gi hide)\n"
+    local ui_text = " --- Gear Statistics --- (//gi hide)\n WIP~>Ody.& Unity Augments \n \n"
     
     local function get_section_lines(stat_list)
         local lines = {}
