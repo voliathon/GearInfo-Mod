@@ -2,7 +2,7 @@
 -- I redid the entire addon so @Copyright Voliathon 2026
 _addon.name = 'GearInfo'
 _addon.author = 'Voliathon'
-_addon.version = '1.1.0'
+_addon.version = '1.2.0'
 _addon.commands = {'gi', 'gearinfo'}
 
 local extdata = require('extdata')
@@ -29,13 +29,24 @@ local default_log_settings = {
     text = { size = 9, font = 'Consolas', alpha = 255, red = 200, green = 200, blue = 200 }
 }
 
+local default_base_settings = {
+    pos = { x = 200, y = 450 },
+    bg = { alpha = 150, red = 0, green = 0, blue = 0, visible = true },
+    flags = { draggable = true, bold = true },
+    text = { size = 10, font = 'Consolas', alpha = 255, red = 255, green = 255, blue = 255 },
+    layout = 'vertical'
+}
+
 local settings = config.load('data\\settings.xml', default_settings)
 local log_settings = config.load('data\\log_settings.xml', default_log_settings)
+local base_settings = config.load('data\\base_settings.xml', default_base_settings)
 
 local display = texts.new(settings)
 local log_display = texts.new(log_settings)
+local base_display = texts.new(base_settings)
 
 local show_log = false
+local show_base = false
 
 -- State and Timer trackers
 local equip_update_timer = 0
@@ -118,7 +129,32 @@ local stat_sequence = {
     { stat = 'Triple Shot', patterns = {'["\']?triple shot["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Triple Shot Damage', patterns = {'["\']?triple shot["\']? damage%s*%+?(%d+)', '["\']?triple shot dmg%.["\']?%s*%+?(%d+)'} },
     { stat = 'Waltz Potency', patterns = {'["\']?waltz["\']? potency%s*%+?(%d+)%%?'} },
-    { stat = 'Weapon Skill Damage', patterns = {'["\']?weapon skill damage["\']?%s*%+?(%d+)%%?'} }
+    { stat = 'Weapon Skill Damage', patterns = {'["\']?weapon skill damage["\']?%s*%+?(%d+)%%?'} },
+
+    -- Base Stats
+    { stat = 'STR', patterns = {'["\']?str["\']?%s*%+?(%d+)'} },
+    { stat = 'DEX', patterns = {'["\']?dex["\']?%s*%+?(%d+)'} },
+    { stat = 'VIT', patterns = {'["\']?vit["\']?%s*%+?(%d+)'} },
+    { stat = 'AGI', patterns = {'["\']?agi["\']?%s*%+?(%d+)'} },
+    { stat = 'INT', patterns = {'["\']?int["\']?%s*%+?(%d+)'} },
+    { stat = 'MND', patterns = {'["\']?mnd["\']?%s*%+?(%d+)'} },
+    { stat = 'CHR', patterns = {'["\']?chr["\']?%s*%+?(%d+)'} },
+
+    -- Pet/Avatar Stats
+    { stat = 'Pet: Accuracy', patterns = {'pet:%s*accuracy%s*%+?(%d+)', 'pet:%s*acc%.%s*%+?(%d+)'} },
+    { stat = 'Pet: Mag. Acc.', patterns = {'pet:%s*mag%.%s*acc%.%s*%+?(%d+)', 'pet:%s*magic accuracy%s*%+?(%d+)'} },
+    { stat = 'Pet: DMG', patterns = {'pet:%s*dmg:%s*%+?(%d+)%%?', 'pet:%s*damage:%s*%+?(%d+)%%?'} },
+    { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage taken%s*%-?(%d+)%%?'} },
+    { stat = 'Pet: All Attr.', patterns = {'pet:%s*all attr%.%s*%+?(%d+)'} },
+    { stat = 'Avatar: All Attr.', patterns = {'avatar:%s*all attr%.%s*%+?(%d+)'} },
+	
+	-- Unique Odyssey Augments
+    { stat = 'Skillchain Damage', patterns = {'["\']?skillchain dmg%.["\']?%s*%+?(%d+)%%?', '["\']?skillchain damage["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Subtle Blow II', patterns = {'["\']?subtle blow ii["\']?%s*%+?(%d+)'} },
+    { stat = 'Recycle', patterns = {'["\']?recycle["\']?%s*%+?(%d+)'} },
+    { stat = 'True Shot', patterns = {'["\']?true shot["\']?%s*%+?(%d+)'} },
+    { stat = 'Chance of successful block', patterns = {'chance of successful block%s*%+?(%d+)'} }
+	
 }
 
 -- UI Rendering Sections (Alphabetized)
@@ -135,6 +171,11 @@ local section2_order = {
 
 local section4_order = { 'Movement Speed' }
 
+local base_stat_order = {
+    'STR', 'DEX', 'VIT', 'AGI', 'INT', 'MND', 'CHR',
+    'Pet: Accuracy', 'Pet: Mag. Acc.', 'Pet: DMG', 'Pet: Damage Taken', 'Pet: All Attr.', 'Avatar: All Attr.'
+}
+
 -- Dynamically construct section 3 (everything else)
 local section3_order = {}
 local function is_in_list(val, lst)
@@ -143,7 +184,8 @@ local function is_in_list(val, lst)
 end
 
 for _, s in ipairs(stat_sequence) do
-    if not is_in_list(s.stat, section1_order) and not is_in_list(s.stat, section2_order) and not is_in_list(s.stat, section4_order) then
+    if not is_in_list(s.stat, section1_order) and not is_in_list(s.stat, section2_order) 
+       and not is_in_list(s.stat, section4_order) and not is_in_list(s.stat, base_stat_order) then
         table.insert(section3_order, s.stat)
     end
 end
@@ -159,8 +201,8 @@ end)
 -- 3. Equipment Layout & Char Stats
 -- ==============================================================================
 local equip_slots_left = { 'main', 'sub', 'head', 'body' }
-local equip_slots_center = { 'hands', 'legs', 'feet', 'waist' }
-local equip_slots_right = { 'ammo', 'range', 'neck', 'left_ear', 'right_ear', 'left_ring', 'right_ring', 'back' } 
+local equip_slots_center = { 'hands', 'legs', 'feet' }
+local equip_slots_right = { 'ammo', 'range', 'neck', 'waist', 'left_ear', 'right_ear', 'left_ring', 'right_ring', 'back' } 
 
 local equip_slots = {}
 for _, slot in ipairs(equip_slots_left) do table.insert(equip_slots, slot) end
@@ -239,43 +281,78 @@ local function calculate_gear_stats()
                     end
                 end
                 
-                -- Dynamic Rank Injector (Uses external tables Rank 1-30)
+                -- Dynamic Rank & Path Injector
                 if exceptions then
                     local item_rank = 0
-                    if decoded_data and type(decoded_data.augments) == 'table' then
-                        for _, aug in ipairs(decoded_data.augments) do
-                            local rank_match = string.match(aug:lower(), "rank%s*(%d+)")
-                            if rank_match then 
-                                item_rank = tonumber(rank_match) 
-                                break 
+                    local item_path = 'A' -- Default path
+
+                    if decoded_data then
+                        -- Primary Check: Native Windower extdata properties
+                        if decoded_data.rank and type(decoded_data.rank) == 'number' then
+                            item_rank = decoded_data.rank
+                        end
+                        if decoded_data.path then
+                            local path_map = {[0]='A', [1]='B', [2]='C', [3]='D'}
+                            if type(decoded_data.path) == 'number' then
+                                item_path = path_map[decoded_data.path] or 'A'
+                            elseif type(decoded_data.path) == 'string' then
+                                item_path = string.match(string.upper(decoded_data.path), "([A-D])") or 'A'
+                            end
+                        end
+
+                        -- Fallback Check: Aggressive string parsing
+                        if type(decoded_data.augments) == 'table' then
+                            for _, aug in ipairs(decoded_data.augments) do
+                                local aug_lower = aug:lower()
+                                
+                                if item_rank == 0 then
+                                    -- Skips ANY character between "rank" and the digits
+                                    local rank_match = string.match(aug_lower, "rank[^%d]*(%d+)")
+                                    if rank_match then item_rank = tonumber(rank_match) end
+                                end
+                                
+                                local path_match = string.match(aug_lower, "path[^a-d]*([a-d])") or string.match(aug_lower, "type[^a-d]*([a-d])")
+                                if path_match then item_path = string.upper(path_match) end
                             end
                         end
                     end
 
-                    local tier_rank = 0
-                    if item_rank >= 30 then tier_rank = 30
-                    elseif item_rank >= 25 then tier_rank = 25
-                    elseif item_rank >= 20 then tier_rank = 20
-                    elseif item_rank >= 15 then tier_rank = 15
-                    end
-
-                    local targeted_rank_table = exceptions[tier_rank]
-                    if targeted_rank_table and targeted_rank_table[item.id] then
-                        for static_stat, static_val in pairs(targeted_rank_table[item.id]) do
-                            if totals[static_stat] ~= nil then
-                                totals[static_stat] = totals[static_stat] + static_val
-                                current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
+                    -- Inject the stats
+                    if item_rank > 0 and exceptions[item_rank] then
+                        local targeted_rank_table = exceptions[item_rank]
+                        
+                        if targeted_rank_table[item.id] then
+                            local stat_source = targeted_rank_table[item.id]
+                            
+                            if stat_source[item_path] then
+                                stat_source = stat_source[item_path]
+                            elseif stat_source['A'] then
+                                stat_source = stat_source['A']
+                            end
+                            
+                            for static_stat, static_val in pairs(stat_source) do
+                                -- This checks if the stat exists in stat_sequence
+                                if type(static_val) == 'number' and totals[static_stat] ~= nil then
+                                    totals[static_stat] = totals[static_stat] + static_val
+                                    current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
+                                end
                             end
                         end
                     end
-                end
-                
-                if next(current_item_stats) ~= nil then
-                    item_details[slot_name] = { name = item_name, stats = current_item_stats }
-                end
-            end
-        end
-    end
+                    
+                    if next(current_item_stats) ~= nil then
+                        item_details[slot_name] = { 
+                            name = item_name, 
+                            stats = current_item_stats,
+                            rank = item_rank,
+                            path = item_path
+                        }
+                    end
+                end -- Closes 'if exceptions then'
+            end -- Closes 'if item and item.id > 0 then'
+        end -- Closes 'if item_index ~= 0 then'
+    end -- Closes 'for _, slot_name in ipairs(equip_slots) do'
+    
     return totals, item_details
 end
 
@@ -402,6 +479,23 @@ local function update_ui()
     end
 
     display:text(ui_text)
+
+    -- Handle the Base Stats Window Rendering
+    if show_base then
+        local base_lines = get_section_lines(base_stat_order)
+        local base_text = " --- Base Stats --- (//gi base)\n\n"
+        
+        if #base_lines > 0 then
+            base_text = base_text .. table.concat(base_lines, "\n") .. "\n"
+        else
+            base_text = base_text .. " No Base Stats Tracked.\n"
+        end
+        
+        base_display:text(base_text)
+        base_display:show()
+    else
+        base_display:hide()
+    end
     
     if show_log then
         local left_lines, center_lines, right_lines = {}, {}, {}
@@ -410,9 +504,22 @@ local function update_ui()
             for _, slot in ipairs(slot_list) do
                 local detail = item_details[slot]
                 if detail then
-                    table.insert(line_list, string.format("[%s] %s:", slot, detail.name))
+                    -- Build the header with Rank and Path details
+                    local header = string.format("[%s] %s", slot, detail.name)
+                    if detail.rank and detail.rank > 0 then
+                        header = header .. string.format(" (Rank %d", detail.rank)
+                        if detail.path then
+                            header = header .. " Path " .. detail.path
+                        end
+                        header = header .. ")"
+                    end
+                    
+                    table.insert(line_list, header .. ":")
+                    
                     for _, s in ipairs(stat_sequence) do
-                        if detail.stats[s.stat] then table.insert(line_list, string.format("    - %s: %d", s.stat, detail.stats[s.stat])) end
+                        if detail.stats[s.stat] then 
+                            table.insert(line_list, string.format("    - %s: %d", s.stat, detail.stats[s.stat])) 
+                        end
                     end
                     table.insert(line_list, "")
                 end
@@ -423,12 +530,12 @@ local function update_ui()
         populate_lines(equip_slots_center, center_lines)
         populate_lines(equip_slots_right, right_lines)
 
-        local log_text = string.format("%-34s | %-34s | %s\n", " --- Log (Left) ---", "--- Log (Center) ---", "--- Log (Right) ---")
+        local log_text = string.format("%-45s | %-45s | %s\n", " --- Log (Left) ---", "--- Log (Center) ---", "--- Log (Right) ---")
         local max_lines = math.max(#left_lines, #center_lines, #right_lines)
         for i = 1, max_lines do
-            log_text = log_text .. string.format("%-34s | %-34s | %s\n", 
-                (left_lines[i] or ""):sub(1, 33), 
-                (center_lines[i] or ""):sub(1, 33), 
+            log_text = log_text .. string.format("%-45s | %-45s | %s\n", 
+                (left_lines[i] or ""):sub(1, 44), 
+                (center_lines[i] or ""):sub(1, 44), 
                 (right_lines[i] or ""))
         end
         log_display:text(log_text)
@@ -531,12 +638,18 @@ windower.register_event('addon command', function(command, ...)
         show_log = not show_log
         if show_log then log_display:show() else log_display:hide() end
         update_ui()
+    elseif command == 'base' then
+        show_base = not show_base
+        if show_base then base_display:show() else base_display:hide() end
+        update_ui()
     elseif command == 'hide' then
         display:hide()
         log_display:hide()
+        base_display:hide()
     elseif command == 'show' then
         display:show()
         if show_log then log_display:show() end
+        if show_base then base_display:show() end
     elseif command == 'ghost' then
         local arg = select(1, ...)
         if arg == 'save' or arg == 'set' then
@@ -576,8 +689,9 @@ windower.register_event('addon command', function(command, ...)
             windower.add_to_chat(207, 'GearInfo: Usage: //gi style [horizontal|vertical]')
         end
     elseif command == 'help' then
-        windower.add_to_chat(207, ' --- GearInfo v1.1.0 Help ---')
+        windower.add_to_chat(207, ' --- GearInfo v1.2.0 Help ---')
         windower.add_to_chat(207, ' //gi refresh          : Manually refreshes UI and pulls new character stats.')
+        windower.add_to_chat(207, ' //gi base             : Toggles the Base Stats (STR/DEX/etc.) UI window.')
         windower.add_to_chat(207, ' //gi ghost save       : Saves a snapshot of your current stats to compare against.')
         windower.add_to_chat(207, ' //gi ghost clear      : Deletes your saved Ghost Gear snapshot.')
         windower.add_to_chat(207, ' //gi ghost toggle     : Hides or shows your Ghost Gear display.')
@@ -596,4 +710,5 @@ end)
 windower.register_event('unload', function()
     config.save(settings, 'all')
     config.save(log_settings, 'all')
+    config.save(base_settings, 'all')
 end)
