@@ -1,5 +1,7 @@
 # GearInfo
 
+WIP - Gotta manually add ranks for all ody and limbus and this will be done-done. 7/10  But everything else works.
+
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. **You will NOT need to incoorporate this into GearSwap. This is stand-alone.**
 
 ## Features
@@ -14,9 +16,9 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
 * **Persistence:** All UI windows are draggable and will remember their position and layout preferences on your screen per character.
 
 <div align="center">
-  <img src="curs-example.png" alt="Cursna Set" />
-  <img src="phalanx-example.png" alt="Phalanx Set" />
-  <img src="savageblade-example.png" alt="Savage Set" />
+  <img src="example1.png" alt="Cursna Set" />
+  <img src="example2.png" alt="Phalanx Set" />
+  <img src="example3.png" alt="Savage Set" />
 </div>
 
 ## Commands
