@@ -8,6 +8,7 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 * **Odyssey & Unity Rank Scaling:** Full support for Rank 1 through 30 path-based augment scaling via a dedicated `exceptions.lua` database, allowing perfect calculations of intermediate ranks. $\color{red}{\text{WIP}}$
 * **Ghost Gear System:** Save a "ghost" snapshot of your stats in memory. Your ghost stats hover next to your active stats in brackets `[G: ...]` so you can rapidly compare gear sets in real-time.
+    * **Smart Comparisons:** The UI automatically calculates the difference between your active gear and your ghost snapshot, displaying a smooth, color-coded green $\color{green}{\text{▲}}$ or $\color{red}{\text{▼}}$ to instantly show you what you're gaining or losing.
 * **Customizable UI:** 
     * Toggle between **Vertical** (stacked) and **Horizontal** (side-by-side) layouts.
     * **Gear Stats:** Shows the total contribution of stats from your currently equipped gear.
@@ -19,7 +20,7 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
   <img src="example1.png" alt="Cursna Set" />
   <img src="example2.png" alt="Phalanx Set" />
   <img src="example3.png" alt="Savage Set" /><br>
-   <img src="example4.png" alt="Ghost" />
+   <img src="example5.png" alt="Ghost" />
 </div>
 
 ## Commands
