@@ -2,15 +2,13 @@
 -- I redid the entire addon so @Copyright Voliathon 2026
 _addon.name = 'GearInfo'
 _addon.author = 'Voliathon'
-_addon.version = '1.0.0'
+_addon.version = '1.1.0'
 _addon.commands = {'gi', 'gearinfo'}
 
 local extdata = require('extdata')
 local res = require('resources')
 local config = require('config')
 local texts = require('texts')
-
--- Load our custom exceptions file
 local exceptions = require('exceptions')
 
 -- ==============================================================================
@@ -38,7 +36,16 @@ local display = texts.new(settings)
 local log_display = texts.new(log_settings)
 
 local show_log = false
+
+-- State and Timer trackers
 local equip_update_timer = 0
+local pending_checkparam = 0
+local hide_next_checkparam = false
+
+-- Ghost Gear Variables
+local show_ghost = false
+local ghost_stats = {}
+local ghost_char_stats = {}
 
 -- ==============================================================================
 -- 2. Ordered Stat Sequence & UI Layout Groups (Alphabetized)
@@ -175,7 +182,6 @@ local char_stats = {
     ['Ranged Accuracy'] = 0, ['Ranged Attack'] = 0,
     ['Evasion'] = 0, ['Defense'] = 0
 }
-local checkparam_active = false 
 
 -- ==============================================================================
 -- 4. Core Calculators
@@ -233,12 +239,33 @@ local function calculate_gear_stats()
                     end
                 end
                 
-                -- Check our exceptions dictionary for path-based items
-                if exceptions[item.id] then
-                    for static_stat, static_val in pairs(exceptions[item.id]) do
-                        if totals[static_stat] ~= nil then
-                            totals[static_stat] = totals[static_stat] + static_val
-                            current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
+                -- Dynamic Rank Injector (Uses external tables Rank 1-30)
+                if exceptions then
+                    local item_rank = 0
+                    if decoded_data and type(decoded_data.augments) == 'table' then
+                        for _, aug in ipairs(decoded_data.augments) do
+                            local rank_match = string.match(aug:lower(), "rank%s*(%d+)")
+                            if rank_match then 
+                                item_rank = tonumber(rank_match) 
+                                break 
+                            end
+                        end
+                    end
+
+                    local tier_rank = 0
+                    if item_rank >= 30 then tier_rank = 30
+                    elseif item_rank >= 25 then tier_rank = 25
+                    elseif item_rank >= 20 then tier_rank = 20
+                    elseif item_rank >= 15 then tier_rank = 15
+                    end
+
+                    local targeted_rank_table = exceptions[tier_rank]
+                    if targeted_rank_table and targeted_rank_table[item.id] then
+                        for static_stat, static_val in pairs(targeted_rank_table[item.id]) do
+                            if totals[static_stat] ~= nil then
+                                totals[static_stat] = totals[static_stat] + static_val
+                                current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
+                            end
                         end
                     end
                 end
@@ -276,15 +303,32 @@ local function update_ui()
         local lines = {}
         for _, stat in ipairs(stat_list) do
             local gear_val = current_stats[stat] or 0
+            local ghost_str = ""
+
+            -- Process ghost stats inline if active
+            if show_ghost then
+                local g_gear_val = ghost_stats[stat] or 0
+                if special_stats_map[stat] then
+                    local g_char_val = ghost_char_stats[special_stats_map[stat]] or 0
+                    if g_gear_val ~= 0 or g_char_val ~= 0 then
+                        ghost_str = string.format(" \\cs(150,150,150)[G: %d (%d)]\\cr", g_char_val, g_gear_val)
+                    end
+                else
+                    if g_gear_val ~= 0 then
+                        ghost_str = string.format(" \\cs(150,150,150)[G: %d]\\cr", g_gear_val)
+                    end
+                end
+            end
             
+            -- Combine active and ghost formats
             if special_stats_map[stat] then
                 local char_val = char_stats[special_stats_map[stat]] or 0
-                if gear_val ~= 0 or char_val ~= 0 then
-                    table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr", stat, char_val, gear_val))
+                if gear_val ~= 0 or char_val ~= 0 or ghost_str ~= "" then
+                    table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr%s", stat, char_val, gear_val, ghost_str))
                 end
             else
-                if gear_val ~= 0 then
-                    table.insert(lines, string.format(" %s: %d", stat, gear_val))
+                if gear_val ~= 0 or ghost_str ~= "" then
+                    table.insert(lines, string.format(" %s: %d%s", stat, gear_val, ghost_str))
                 end
             end
         end
@@ -302,7 +346,8 @@ local function update_ui()
         if max_rows == 0 then
             ui_text = ui_text .. " No stats tracked.\n"
         else
-            local col_widths = { 32, 36, 36, 25 }
+            -- Expand column widths massively when ghost mode is on so the ghost brackets fit nicely
+            local col_widths = show_ghost and { 45, 52, 52, 38 } or { 32, 36, 36, 25 }
             local active_cols = {}
             
             if #lines1 > 0 then table.insert(active_cols, {lines=lines1, width=col_widths[1]}) end
@@ -372,69 +417,85 @@ local function update_ui()
     end
 end
 
-local function refresh_all()
-    update_ui()
-    checkparam_active = true
-    windower.send_command('checkparam <me>')
-end
-
 -- ==============================================================================
 -- 6. Event Listeners & Timers
 -- ==============================================================================
 windower.register_event('incoming chunk', function(id, data, modified, injected, blocked)
     if id == 0x050 then
+        -- Refresh timer resets locally on gear movement.
         equip_update_timer = os.clock() + 0.5
     end
 end)
 
 windower.register_event('prerender', function()
-    if equip_update_timer > 0 and os.clock() > equip_update_timer then
+    local now = os.clock()
+    
+    -- Stage 1: Fast local render update (Updates the green gear values instantly)
+    if equip_update_timer > 0 and now > equip_update_timer then
         equip_update_timer = 0 
-        refresh_all()          
+        update_ui()
+        -- Wait 1.2 seconds for the server to process the gear update before asking for true totals
+        pending_checkparam = now + 1.2
+    end
+    
+    -- Stage 2: Safe Server Ping
+    if pending_checkparam > 0 and now > pending_checkparam then
+        pending_checkparam = 0
+        hide_next_checkparam = true -- Hide the automated command from user's chat log
+        windower.send_command('checkparam <me>')
     end
 end)
 
-windower.register_event('load', 'login', 'zone change', refresh_all)
+windower.register_event('load', 'login', 'zone change', function()
+    update_ui()
+    hide_next_checkparam = true
+    windower.send_command('checkparam <me>')
+end)
 
 windower.register_event('incoming text', function(original, modified, original_mode, modified_mode, blocked)
-    if not checkparam_active then return end
-    
+    local is_checkparam_line = false
     local player = windower.ffxi.get_player()
     local name = player and player.name or ""
 
-    if original:match('Average item level:') then return true 
-    elseif original:match('Auxiliary Accuracy:') then return true 
-    elseif name ~= "" and original:match('^' .. name .. ':') then return true end
+    -- Fast-filter chat text to confirm if this is a checkparam return line
+    if original:match('Primary Accuracy') or original:match('Secondary Accuracy') or 
+       original:match('Ranged Accuracy') or original:match('Evasion') or 
+       original:match('Average item level:') or original:match('Auxiliary Accuracy:') or
+       (name ~= "" and original:match('^' .. name .. ':')) then
+        is_checkparam_line = true
+    end
 
-    if original:match('Primary Accuracy') then
-        local pacc, patk = original:match('Primary Accuracy[^0-9]*(%d+)[^0-9]*Primary Attack[^0-9]*(%d+)')
-        if pacc and patk then
-            char_stats['Primary Accuracy'] = tonumber(pacc)
-            char_stats['Primary Attack'] = tonumber(patk)
-        end
-        return true 
-        
-    elseif original:match('Secondary Accuracy') then
-        return true 
-        
-    elseif original:match('Ranged Accuracy') then
-        local racc, ratk = original:match('Ranged Accuracy[^0-9]*(%d+)[^0-9]*Ranged Attack[^0-9]*(%d+)')
-        if racc and ratk then 
-            char_stats['Ranged Accuracy'] = tonumber(racc)
-            char_stats['Ranged Attack'] = tonumber(ratk)
-        end
-        return true
-        
-    elseif original:match('Evasion') then
-        local eva, def = original:match('Evasion[^0-9]*(%d+)[^0-9]*Defense[^0-9]*(%d+)')
-        if eva and def then 
-            char_stats['Evasion'] = tonumber(eva)
-            char_stats['Defense'] = tonumber(def)
+    if is_checkparam_line then
+        -- Process Values
+        if original:match('Primary Accuracy') then
+            local pacc, patk = original:match('Primary Accuracy[^0-9]*(%d+)[^0-9]*Primary Attack[^0-9]*(%d+)')
+            if pacc and patk then
+                char_stats['Primary Accuracy'] = tonumber(pacc)
+                char_stats['Primary Attack'] = tonumber(patk)
+            end
+        elseif original:match('Ranged Accuracy') then
+            local racc, ratk = original:match('Ranged Accuracy[^0-9]*(%d+)[^0-9]*Ranged Attack[^0-9]*(%d+)')
+            if racc and ratk then 
+                char_stats['Ranged Accuracy'] = tonumber(racc)
+                char_stats['Ranged Attack'] = tonumber(ratk)
+            end
+        elseif original:match('Evasion') then
+            local eva, def = original:match('Evasion[^0-9]*(%d+)[^0-9]*Defense[^0-9]*(%d+)')
+            if eva and def then 
+                char_stats['Evasion'] = tonumber(eva)
+                char_stats['Defense'] = tonumber(def)
+            end
+            -- Evasion is always the final line, update UI!
+            update_ui()
         end
         
-        checkparam_active = false
-        update_ui()
-        return true
+        -- Block our hidden automated checkparams from spamming the user's chatlog
+        if hide_next_checkparam then
+            if original:match('Evasion') then
+                hide_next_checkparam = false
+            end
+            return true 
+        end
     end
 end)
 
@@ -445,7 +506,9 @@ windower.register_event('addon command', function(command, ...)
     command = command and command:lower() or 'help'
     
     if command == 'refresh' then
-        refresh_all()
+        update_ui()
+        hide_next_checkparam = true
+        windower.send_command('checkparam <me>')
     elseif command == 'log' then
         show_log = not show_log
         if show_log then log_display:show() else log_display:hide() end
@@ -456,6 +519,34 @@ windower.register_event('addon command', function(command, ...)
     elseif command == 'show' then
         display:show()
         if show_log then log_display:show() end
+    elseif command == 'ghost' then
+        local arg = select(1, ...)
+        if arg == 'save' or arg == 'set' then
+            local cur, _ = calculate_gear_stats()
+            
+            -- Snapshots the state of the gear arrays
+            ghost_stats = {}
+            for k, v in pairs(cur) do ghost_stats[k] = v end
+            
+            ghost_char_stats = {}
+            for k, v in pairs(char_stats) do ghost_char_stats[k] = v end
+            
+            show_ghost = true
+            update_ui()
+            windower.add_to_chat(207, 'GearInfo: Ghost Gear Snapshot Saved!')
+        elseif arg == 'clear' or arg == 'remove' then
+            show_ghost = false
+            ghost_stats = {}
+            ghost_char_stats = {}
+            update_ui()
+            windower.add_to_chat(207, 'GearInfo: Ghost Gear Cleared.')
+        elseif arg == 'toggle' then
+            show_ghost = not show_ghost
+            update_ui()
+            windower.add_to_chat(207, 'GearInfo: Ghost Gear ' .. (show_ghost and 'Enabled' or 'Disabled'))
+        else
+            windower.add_to_chat(207, 'GearInfo: Ghost Usage: //gi ghost [save|clear|toggle]')
+        end
     elseif command == 'style' then
         local arg = select(1, ...)
         if arg == 'horizontal' or arg == 'vertical' then
@@ -467,8 +558,11 @@ windower.register_event('addon command', function(command, ...)
             windower.add_to_chat(207, 'GearInfo: Usage: //gi style [horizontal|vertical]')
         end
     elseif command == 'help' then
-        windower.add_to_chat(207, ' --- GearInfo v1.0.0 Help ---')
+        windower.add_to_chat(207, ' --- GearInfo v1.1.0 Help ---')
         windower.add_to_chat(207, ' //gi refresh          : Manually refreshes UI and pulls new character stats.')
+        windower.add_to_chat(207, ' //gi ghost save       : Saves a snapshot of your current stats to compare against.')
+        windower.add_to_chat(207, ' //gi ghost clear      : Deletes your saved Ghost Gear snapshot.')
+        windower.add_to_chat(207, ' //gi ghost toggle     : Hides or shows your Ghost Gear display.')
         windower.add_to_chat(207, ' //gi log              : Toggles the detailed item breakdown log.')
         windower.add_to_chat(207, ' //gi hide             : Hides the Gear Statistics UI completely.')
         windower.add_to_chat(207, ' //gi show             : Shows the Gear Statistics UI.')
