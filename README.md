@@ -1,12 +1,12 @@
 # GearInfo
 
-WIP - Gotta manually add ranks for all ody and limbus and this will be done-done. 7/10  But everything else works.
+$\color{red}{\text{WIP}}$ - Gotta manually add ranks for all ody and limbus and this will be done-done. 7/10  But everything else works.
 
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. **You will NOT need to incoorporate this into GearSwap. This is stand-alone.**
 
 ## Features
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
-* **Odyssey & Unity Rank Scaling:** Full support for Rank 1 through 30 path-based augment scaling via a dedicated `exceptions.lua` database, allowing perfect calculations of intermediate ranks.
+* **Odyssey & Unity Rank Scaling:** Full support for Rank 1 through 30 path-based augment scaling via a dedicated `exceptions.lua` database, allowing perfect calculations of intermediate ranks. $\color{red}{\text{WIP}}$
 * **Ghost Gear System:** Save a "ghost" snapshot of your stats in memory. Your ghost stats hover next to your active stats in brackets `[G: ...]` so you can rapidly compare gear sets in real-time.
 * **Customizable UI:** 
     * Toggle between **Vertical** (stacked) and **Horizontal** (side-by-side) layouts.
