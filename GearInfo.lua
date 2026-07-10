@@ -304,31 +304,49 @@ local function update_ui()
         for _, stat in ipairs(stat_list) do
             local gear_val = current_stats[stat] or 0
             local ghost_str = ""
+            local arrow_str = ""
 
-            -- Process ghost stats inline if active
+            -- Process ghost stats and comparison arrows if active
             if show_ghost then
                 local g_gear_val = ghost_stats[stat] or 0
+                
                 if special_stats_map[stat] then
+                    local char_val = char_stats[special_stats_map[stat]] or 0
                     local g_char_val = ghost_char_stats[special_stats_map[stat]] or 0
+                    
+                    -- Dual-Check Priority: Checks true character totals first. 
+                    -- If they haven't updated yet (due to the 1.2s checkparam delay), it falls back to gear totals instantly.
+                    local char_diff = char_val - g_char_val
+                    local gear_diff = gear_val - g_gear_val
+                    
+                    if char_diff > 0 then arrow_str = " \\cs(0,255,0)▲\\cr"
+                    elseif char_diff < 0 then arrow_str = " \\cs(255,50,50)▼\\cr"
+                    elseif gear_diff > 0 then arrow_str = " \\cs(0,255,0)▲\\cr"
+                    elseif gear_diff < 0 then arrow_str = " \\cs(255,50,50)▼\\cr" end
+                    
                     if g_gear_val ~= 0 or g_char_val ~= 0 then
                         ghost_str = string.format(" \\cs(150,150,150)[G: %d (%d)]\\cr", g_char_val, g_gear_val)
                     end
                 else
+                    -- Standard gear stat arrow logic
+                    if gear_val > g_gear_val then arrow_str = " \\cs(0,255,0)▲\\cr"
+                    elseif gear_val < g_gear_val then arrow_str = " \\cs(255,50,50)▼\\cr" end
+
                     if g_gear_val ~= 0 then
                         ghost_str = string.format(" \\cs(150,150,150)[G: %d]\\cr", g_gear_val)
                     end
                 end
             end
             
-            -- Combine active and ghost formats
+            -- Combine active formats, ghost brackets, and comparison arrows
             if special_stats_map[stat] then
                 local char_val = char_stats[special_stats_map[stat]] or 0
                 if gear_val ~= 0 or char_val ~= 0 or ghost_str ~= "" then
-                    table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr%s", stat, char_val, gear_val, ghost_str))
+                    table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr%s%s", stat, char_val, gear_val, ghost_str, arrow_str))
                 end
             else
                 if gear_val ~= 0 or ghost_str ~= "" then
-                    table.insert(lines, string.format(" %s: %d%s", stat, gear_val, ghost_str))
+                    table.insert(lines, string.format(" %s: %d%s%s", stat, gear_val, ghost_str, arrow_str))
                 end
             end
         end
