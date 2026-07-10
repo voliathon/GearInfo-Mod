@@ -39,6 +39,11 @@ Type the following into your FFXI chat log:
 | `//gi style vertical` | Changes the UI back to a stacked layout. |
 | `//gi help` | Displays this help menu in your chat log. |
 
+## TODO
+1. Add Ody weapons and accessories.
+2. Add Unity stuffs
+3. Add Limbus stuffs
+
 ## Usage
 1. Load the addon: `//lua load gearinfo`
 2. The UI windows will appear on your screen.
