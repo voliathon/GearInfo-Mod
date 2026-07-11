@@ -8,7 +8,7 @@ for i = 1, 30 do rank_tables[i] = {} end
 local data_modules = {
     require('data.odyssey'),
     -- require('data.unity'),
-    -- require('data.limbus'),
+     require('data.limbus'),
     -- require('data.jse'),
 	-- require('data.divergence'),
 }
