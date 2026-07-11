@@ -43,6 +43,7 @@ Type the following into your FFXI chat log:
 1. Add Ody weapons and accessories.
 2. Add Unity stuffs
 3. Add Limbus stuffs
+4. Pet Augments is buggy
 
 ## Usage
 1. Load the addon: `//lua load gearinfo`
