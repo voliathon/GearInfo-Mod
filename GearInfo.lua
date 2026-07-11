@@ -9,7 +9,7 @@ local extdata = require('extdata')
 local res = require('resources')
 local config = require('config')
 local texts = require('texts')
-local exceptions = require('exceptions')
+local augments = require('augments')
 
 -- ==============================================================================
 -- 1. Setup UI & Per-Character Persistence
@@ -123,7 +123,7 @@ local stat_sequence = {
     { stat = 'Store TP', patterns = {'["\']?store tp["\']?%s*%+?(%d+)'} },
     { stat = 'Subtle Blow', patterns = {'["\']?subtle blow["\']?%s*%+?(%d+)'} },
     { stat = 'TP Bonus', patterns = {'["\']?tp bonus["\']?%s*%+?(%d+)'} },
-    { stat = 'Treasure Hunter', patterns = {'["\']?treasure hunter["\']?%s*%+?(%d+)', '["\']?th["\']?%s*%+?(%d+)'} },
+    { stat = 'Treasure Hunter', patterns = {'["\']?treasure hunter["\']?%s*%+?(%d+)', '%s+th%s*%+?(%d+)', '^th%s*%+?(%d+)'} },
     { stat = 'Triple Attack', patterns = {'["\']?triple attack["\']?%s*%+?(%d+)%%?', '["\']?tri%.%s*atk%.["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Triple Attack Damage', patterns = {'["\']?triple attack["\']? damage%s*%+?(%d+)', '["\']?triple attack dmg%.["\']?%s*%+?(%d+)'} },
     { stat = 'Triple Shot', patterns = {'["\']?triple shot["\']?%s*%+?(%d+)%%?'} },
@@ -140,13 +140,23 @@ local stat_sequence = {
     { stat = 'MND', patterns = {'["\']?mnd["\']?%s*%+?(%d+)'} },
     { stat = 'CHR', patterns = {'["\']?chr["\']?%s*%+?(%d+)'} },
 
-    -- Pet/Avatar Stats
+    -- Pet/Avatar/Automaton Stats
     { stat = 'Pet: Accuracy', patterns = {'pet:%s*accuracy%s*%+?(%d+)', 'pet:%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Pet: Mag. Acc.', patterns = {'pet:%s*mag%.%s*acc%.%s*%+?(%d+)', 'pet:%s*magic accuracy%s*%+?(%d+)'} },
+    { stat = 'Pet: Ranged Accuracy', patterns = {'pet:%s*rng%.%s*acc%.?%s*%+?(%d+)', 'pet:%s*ranged accuracy%s*%+?(%d+)'} },
+    { stat = 'Pet: Attack', patterns = {'pet:%s*attack%s*%+?(%d+)', 'pet:%s*atk%.%s*%+?(%d+)'} },
     { stat = 'Pet: DMG', patterns = {'pet:%s*dmg:%s*%+?(%d+)%%?', 'pet:%s*damage:%s*%+?(%d+)%%?'} },
     { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage taken%s*%-?(%d+)%%?'} },
     { stat = 'Pet: All Attr.', patterns = {'pet:%s*all attr%.%s*%+?(%d+)'} },
     { stat = 'Avatar: All Attr.', patterns = {'avatar:%s*all attr%.%s*%+?(%d+)'} },
+    { stat = 'Avatar: Accuracy', patterns = {'avatar:%s*accuracy%s*%+?(%d+)', 'avatar:%s*acc%.%s*%+?(%d+)'} },
+    { stat = 'Avatar: Mag. Acc.', patterns = {'avatar:%s*mag%.%s*acc%.%s*%+?(%d+)', 'avatar:%s*magic accuracy%s*%+?(%d+)'} },
+    { stat = 'Avatar: Enmity', patterns = {'avatar:%s*enmity%s*([%+%-]%s*%d+)'} },
+    { stat = 'Automaton: Accuracy', patterns = {'automaton:%s*accuracy%s*%+?(%d+)', 'automaton:%s*acc%.%s*%+?(%d+)'} },
+    { stat = 'Automaton: Mag. Acc.', patterns = {'automaton:%s*mag%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*magic accuracy%s*%+?(%d+)'} },
+    { stat = 'Automaton: R. Acc.', patterns = {'automaton:%s*r%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*rng%.%s*acc%.%s*%+?(%d+)'} },
+    { stat = 'Automaton: HP', patterns = {'automaton:%s*hp%s*%+?(%d+)'} },
+    { stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} },
 	
 	-- Unique Odyssey Augments
     { stat = 'Skillchain Damage', patterns = {'["\']?skillchain dmg%.["\']?%s*%+?(%d+)%%?', '["\']?skillchain damage["\']?%s*%+?(%d+)%%?'} },
@@ -173,7 +183,9 @@ local section4_order = { 'Movement Speed' }
 
 local base_stat_order = {
     'STR', 'DEX', 'VIT', 'AGI', 'INT', 'MND', 'CHR',
-    'Pet: Accuracy', 'Pet: Mag. Acc.', 'Pet: DMG', 'Pet: Damage Taken', 'Pet: All Attr.', 'Avatar: All Attr.'
+    'Pet: Attack', 'Pet: Accuracy', 'Pet: Ranged Accuracy', 'Pet: Mag. Acc.', 'Pet: DMG', 'Pet: Damage Taken', 'Pet: All Attr.', 
+    'Avatar: Accuracy', 'Avatar: Mag. Acc.', 'Avatar: Enmity', 'Avatar: All Attr.',
+    'Automaton: Accuracy', 'Automaton: R. Acc.', 'Automaton: Mag. Acc.', 'Automaton: HP', 'Automaton: Special attack damage'
 }
 
 -- Dynamically construct section 3 (everything else)
@@ -264,6 +276,23 @@ local function calculate_gear_stats()
                 for _, text_line in ipairs(strings_to_parse) do
                     local current_line = text_line:lower() 
                     
+					-- PRE-PROCESSOR: Force prefixes on grouped companion stats so player regex ignores them
+					if current_line:find("pet:") then
+						current_line = string.gsub(current_line, "rng%.%s*acc%.", "pet: rng. acc.")
+						current_line = string.gsub(current_line, "ranged accuracy", "pet: ranged accuracy")
+						current_line = string.gsub(current_line, "mag%.%s*acc%.", "pet: mag. acc.")
+						current_line = string.gsub(current_line, "magic accuracy", "pet: magic accuracy")
+						current_line = string.gsub(current_line, "rng%.%s*atk%.", "pet: rng. atk.")
+					elseif current_line:find("automaton:") then
+						current_line = string.gsub(current_line, "mag%.%s*acc%.", "automaton: mag. acc.")
+						current_line = string.gsub(current_line, "magic accuracy", "automaton: magic accuracy")
+						current_line = string.gsub(current_line, "r%.%s*acc%.", "automaton: r. acc.")
+						current_line = string.gsub(current_line, "rng%.%s*acc%.", "automaton: rng. acc.")
+					elseif current_line:find("avatar:") then
+						current_line = string.gsub(current_line, "mag%.%s*acc%.", "avatar: mag. acc.")
+						current_line = string.gsub(current_line, "magic accuracy", "avatar: magic accuracy")
+					end
+					
                     for _, stat_data in ipairs(parse_sequence) do
                         for _, pattern in ipairs(stat_data.patterns) do
                             local match = string.match(current_line, pattern)
@@ -282,7 +311,7 @@ local function calculate_gear_stats()
                 end
                 
                 -- Dynamic Rank & Path Injector
-                if exceptions then
+                if augments then
                     local item_rank = 0
                     local item_path = 'A' -- Default path
 
@@ -318,8 +347,8 @@ local function calculate_gear_stats()
                     end
 
                     -- Inject the stats
-                    if item_rank > 0 and exceptions[item_rank] then
-                        local targeted_rank_table = exceptions[item_rank]
+                    if item_rank > 0 and augments[item_rank] then
+                        local targeted_rank_table = augments[item_rank]
                         
                         if targeted_rank_table[item.id] then
                             local stat_source = targeted_rank_table[item.id]
@@ -348,7 +377,7 @@ local function calculate_gear_stats()
                             path = item_path
                         }
                     end
-                end -- Closes 'if exceptions then'
+                end -- Closes 'if augments then'
             end -- Closes 'if item and item.id > 0 then'
         end -- Closes 'if item_index ~= 0 then'
     end -- Closes 'for _, slot_name in ipairs(equip_slots) do'
