@@ -17,10 +17,10 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
 * **Persistence:** All UI windows are draggable and will remember their position and layout preferences on your screen per character.
 
 <div align="center">
-  <img src="example1.png" alt="Cursna Set" />
-  <img src="example2.png" alt="Phalanx Set" />
-  <img src="example3.png" alt="Savage Set" /><br>
-   <img src="example6.png" alt="Ghost" />
+  <img src="examples/example1.png" alt="Cursna Set" />
+  <img src="examples/example2.png" alt="Phalanx Set" />
+  <img src="examples/example3.png" alt="Savage Set" /><br>
+   <img src="examples/example6.png" alt="Ghost" />
 </div>
 
 ## Commands
