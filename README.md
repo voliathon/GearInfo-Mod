@@ -40,7 +40,7 @@ Type the following into your FFXI chat log:
 | `//gi help` | Displays this help menu in your chat log. |
 
 ## TODO
-1. Add Ody weapons and accessories.
+1. ~~Add Ody weapons and accessories.~~ DONE on 7/11/2026
 2. Add Unity stuffs
 3. Add Limbus stuffs
 4. Pet Augments is buggy
