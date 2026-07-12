@@ -43,7 +43,7 @@ Type the following into your FFXI chat log:
 1. ~~Add Ody weapons and accessories.~~ DONE on 7/11/2026
 2. Add Unity stuffs
 3. Add Limbus stuffs
-4. Pet Augments is buggy
+4. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
 
 ## Usage
 1. Load the addon: `//lua load gearinfo`
