@@ -368,10 +368,11 @@ local function calculate_gear_stats()
                 end
                 
                 -- Dynamic Rank & Path Injector
-                if augments then
-                    local item_rank = 0
-                    local item_path = 'A' -- Default path
+                local missing_data = false
+                local item_rank = 0
+                local item_path = 'A' -- Default path
 
+                if augments then
                     if decoded_data then
                         -- Primary Check: Native Windower extdata properties
                         if decoded_data.rank and type(decoded_data.rank) == 'number' then
@@ -402,11 +403,10 @@ local function calculate_gear_stats()
                         end
                     end
 
-                    -- Inject the stats
-                    if item_rank > 0 and augments[item_rank] then
-                        local targeted_rank_table = augments[item_rank]
-                        
-                        if targeted_rank_table[item.id] then
+                    -- Inject the stats and check for missing data
+                    if item_rank > 0 then
+                        if augments[item_rank] and augments[item_rank][item.id] then
+                            local targeted_rank_table = augments[item_rank]
                             local stat_source = targeted_rank_table[item.id]
                             
                             if stat_source[item_path] then
@@ -421,21 +421,26 @@ local function calculate_gear_stats()
                                     current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
                                 end
                             end
+                        else
+                            -- The item has a rank, but we have no data mapped for it!
+                            missing_data = true
                         end
                     end
-                    
-                    if next(current_item_stats) ~= nil then
-                        item_details[slot_name] = { 
-                            name = item_name, 
-                            stats = current_item_stats,
-                            rank = item_rank,
-                            path = item_path
-                        }
-                    end
-                end -- Closes 'if augments then'
-            end -- Closes 'if item and item.id > 0 then'
-        end -- Closes 'if item_index ~= 0 then'
-    end -- Closes 'for _, slot_name in ipairs(equip_slots) do'
+                end
+                
+                -- Populate details if it has stats OR if it's missing data
+                if next(current_item_stats) ~= nil or missing_data then
+                    item_details[slot_name] = { 
+                        name = item_name, 
+                        stats = current_item_stats,
+                        rank = item_rank,
+                        path = item_path,
+                        missing = missing_data
+                    }
+                end
+            end -- Closes if item and item.id > 0 then
+        end -- Closes if item_index ~= 0 then
+    end -- closes for _, slot_name in ipairs(equip_slots) do
     
     return totals, item_details
 end
@@ -458,7 +463,27 @@ end
 local function update_ui()
     local current_stats, item_details = calculate_gear_stats()
     
-    local ui_text = " --- Gear Statistics --- (//gi hide)\n WIP~>Ody.& Unity Augments \n \n"
+    local ui_text = " --- Gear Statistics --- (//gi hide)\n"
+    
+    -- Check for missing augment data and stack warnings
+    local missing_items = {}
+    for _, slot in ipairs(equip_slots) do
+        local detail = item_details[slot]
+        if detail and detail.missing then
+            local rank_str = detail.rank > 0 and (" (Rank " .. detail.rank .. ")") or ""
+            table.insert(missing_items, detail.name .. rank_str)
+        end
+    end
+
+    if #missing_items > 0 then
+        ui_text = ui_text .. " \\cs(255,50,50)[Warning] Missing Database Entry For:\\cr\n"
+        for _, item_name in ipairs(missing_items) do
+            ui_text = ui_text .. " \\cs(255,50,50)  - " .. item_name .. "\\cr\n"
+        end
+        ui_text = ui_text .. "\n"
+    else
+        ui_text = ui_text .. "\n"
+    end
     
     local function get_section_lines(stat_list)
         local lines = {}
@@ -578,6 +603,7 @@ local function update_ui()
     
     if show_log then
         local left_lines, center_lines, right_lines = {}, {}, {}
+        local has_missing_data = false
         
         local function populate_lines(slot_list, line_list)
             for _, slot in ipairs(slot_list) do
@@ -590,6 +616,12 @@ local function update_ui()
                             header = header .. " Path " .. detail.path
                         end
                         header = header .. ")"
+                    end
+                    
+                    -- Paint the header red and add a tag if data is missing
+                    if detail.missing then
+                        header = "\\cs(255,50,50)" .. header .. " *MISSING DATA*\\cr"
+                        has_missing_data = true
                     end
                     
                     table.insert(line_list, header .. ":")
@@ -614,17 +646,30 @@ local function update_ui()
         for _, l in ipairs(center_lines) do table.insert(all_lines, l) end
         for _, l in ipairs(right_lines) do table.insert(all_lines, l) end
         
+        -- Safely strip color codes before checking the text length
         for _, line in ipairs(all_lines) do
-            if string.len(line) > max_w then max_w = string.len(line) + 2 end
+            local vis_line = string.gsub(line, "\\cs%(%d+,%d+,%d+%)", "")
+            vis_line = string.gsub(vis_line, "\\cr", "")
+            if string.len(vis_line) > max_w then max_w = string.len(vis_line) + 2 end
         end
 
-        local log_text = string.format("%-"..max_w.."s | %-"..max_w.."s | %s\n", " --- Log (Left) ---", "--- Log (Center) ---", "--- Log (Right) ---")
+        local log_text = ""
+        if has_missing_data then
+            log_text = log_text .. " \\cs(255,50,50)WARNING: Items highlighted in RED have missing augment data in your database.\\cr\n\n"
+        end
+
+        -- We must use pad_column here instead of string.format %s so color codes don't break the alignment
+        local h_left = pad_column(" --- Log (Left) ---", max_w)
+        local h_center = pad_column("--- Log (Center) ---", max_w)
+        local h_right = "--- Log (Right) ---"
+        log_text = log_text .. h_left .. " | " .. h_center .. " | " .. h_right .. "\n"
+
         local max_lines = math.max(#left_lines, #center_lines, #right_lines)
         for i = 1, max_lines do
-            log_text = log_text .. string.format("%-"..max_w.."s | %-"..max_w.."s | %s\n", 
-                (left_lines[i] or ""):sub(1, max_w), 
-                (center_lines[i] or ""):sub(1, max_w), 
-                (right_lines[i] or ""))
+            local l = pad_column(left_lines[i] or "", max_w)
+            local c = pad_column(center_lines[i] or "", max_w)
+            local r = right_lines[i] or ""
+            log_text = log_text .. l .. " | " .. c .. " | " .. r .. "\n"
         end
         log_display:text(log_text)
     end
