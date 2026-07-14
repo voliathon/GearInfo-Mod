@@ -165,7 +165,17 @@ local stat_sequence = {
     { stat = 'Automaton: Mag. Acc.', patterns = {'automaton:%s*mag%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*magic accuracy%s*%+?(%d+)'} },
     { stat = 'Automaton: R. Acc.', patterns = {'automaton:%s*r%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*rng%.%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Automaton: HP', patterns = {'automaton:%s*hp%s*%+?(%d+)'} },
-    { stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} }
+    { stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} },
+	
+	{ stat = 'Sword Enhancement Spell Damage', patterns = {'["\']?sword enhancement spell damage["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Parrying Skill', patterns = {'["\']?parrying skill["\']?%s*%+?(%d+)'} },
+    { stat = 'Healing Magic Skill', patterns = {'["\']?healing magic skill["\']?%s*%+?(%d+)'} },
+    { stat = 'Enhancing Magic Skill', patterns = {'["\']?enhancing magic skill["\']?%s*%+?(%d+)'} },
+    { stat = 'Resist Bind', patterns = {'["\']?resist bind["\']?%s*%+?(%d+)'} },
+    { stat = 'Resist Silence', patterns = {'["\']?resist silence["\']?%s*%+?(%d+)'} },
+    { stat = 'Avatar Perpetuation Cost', patterns = {'avatar perpetuation cost%s*%-?(%d+)'} },
+    { stat = 'Avatar: Magic Burst Bonus', patterns = {'avatar:%s*magic burst bonus%s*%+?(%d+)%%?'} },
+    { stat = 'Avatar: TP Bonus', patterns = {'avatar:%s*tp bonus%s*%+?(%d+)'} }
 }
 
 -- UI Rendering Sections (Alphabetized)
