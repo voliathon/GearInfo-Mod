@@ -42,7 +42,7 @@ Type the following into your FFXI chat log:
 ## TODO
 1. ~~Add Ody weapons and accessories.~~ DONE on 7/11/2026
 2. ~~Add Unity stuffs~~ DONE on 7/14/2026
-3. Add Limbus stuffs
+3. ~~Add Limbus stuffs~~ DONE on 7/20/2026
 4. Add Divergeance Stuffs
 5. Add JSE NQ, +1, +2 Stuffs
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
