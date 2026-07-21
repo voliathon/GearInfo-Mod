@@ -1,12 +1,12 @@
 # GearInfo
 
-$\color{red}{\text{WIP}}$ - Gotta manually add ranks for all limbus/unity/jse/divergence and this will be done-done. 7/11  But everything else works including Odyssey.
+$\color{red}{\text{WIP}}$ - Gotta manually add ranks for all jse/divergence and this will be done-done. 7/20  Odyssey, Unity, and Limbus are complete.
 
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. **You will NOT need to incoorporate this into GearSwap. This is stand-alone.**
 
 ## Features
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
-* **Odyssey & Unity Rank Scaling:** Full support for Rank 1 through 30 path-based augment scaling via a dedicated `augments.lua` database, allowing perfect calculations of intermediate ranks. $\color{red}{\text{WIP}}$
+* **Odyssey, Unity, Limbus, Divergence, JSE Necks Rank Scaling:** Full support for Rank 1 through 30 (If applicable) path-based augment scaling via a dedicated `augments.lua` database, allowing perfect calculations of intermediate ranks. 
 * **Ghost Gear System:** Save a "ghost" snapshot of your stats in memory. Your ghost stats hover next to your active stats in brackets `[G: ...]` so you can rapidly compare gear sets in real-time.
     * **Smart Comparisons:** The UI automatically calculates the difference between your active gear and your ghost snapshot, displaying a smooth, color-coded green $\color{green}{\text{▲}}$ or $\color{red}{\text{▼}}$ to instantly show you what you're gaining or losing.
 * **Customizable UI:** 
