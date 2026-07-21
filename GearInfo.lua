@@ -187,7 +187,48 @@ local stat_sequence = {
     { stat = 'Resist Silence', patterns = {'["\']?resist silence["\']?%s*%+?(%d+)'} },
     { stat = 'Avatar Perpetuation Cost', patterns = {'avatar perpetuation cost%s*%-?(%d+)'} },
     { stat = 'Avatar: Magic Burst Bonus', patterns = {'avatar:%s*magic burst bonus%s*%+?(%d+)%%?'} },
-    { stat = 'Avatar: TP Bonus', patterns = {'avatar:%s*tp bonus%s*%+?(%d+)'} }
+    { stat = 'Avatar: TP Bonus', patterns = {'avatar:%s*tp bonus%s*%+?(%d+)'} },
+	
+	-- Divergence Stats
+	{ stat = 'Chance of double damage', patterns = {'chance of double damage%s*%+?(%d+)%%?'} },
+    { stat = 'Chance of follow-up attack', patterns = {'chance of follow%-up attack%s*%+?(%d+)%%?'} },
+    { stat = 'Subtle Blow II', patterns = {'["\']?subtle blow ii["\']?%s*%+?(%d+)'} },
+    { stat = 'Afflatus Misery stored', patterns = {'["\']?afflatus misery["\']? stored%s*%+?(%d+)%%?'} },
+    { stat = 'Healing magic recast delay', patterns = {'healing magic recast delay%s*%-?(%d+)%%?'} },
+    { stat = 'Song spellcasting time', patterns = {'song spellcasting time%s*%-?(%d+)%%?'} },
+    { stat = 'Song effects: Double Attack', patterns = {'song effects: ["\']?double attack["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Magic burst damage II', patterns = {'magic burst damage ii%s*%+?(%d+)%%?'} },
+    { stat = 'Drain and Aspir potency', patterns = {'["\']?drain["\']? and ["\']?aspir["\']? potency%s*%+?(%d+)%%?'} },
+    { stat = 'Elemental weapon skill damage', patterns = {'elemental weapon skill damage%s*%+?(%d+)%%?'} },
+    { stat = 'Pet: Chance of double damage', patterns = {'pet:%s*chance of double damage%s*%+?(%d+)%%?'} },
+    { stat = 'Chance of doubling Blood Pact status', patterns = {'chance of doubling ["\']?blood pact["\']? status%s*%+?(%d+)%%?'} },
+    { stat = 'Drain potency', patterns = {'["\']?drain["\']? potency%s*%+?(%d+)%%?'} },
+    { stat = 'Ninjutsu recast time', patterns = {'ninjutsu recast time%s*%-?(%d+)%%?'} },
+    { stat = 'Enmity for each Utsusemi', patterns = {'enmity%s*%+?(%d+)%s*for each utsusemi'} },
+    { stat = 'Sekkanoki recast time', patterns = {'["\']?sekkanoki["\']? recast time%s*%-?(%d+)%%?'} },
+    { stat = 'Sekkanoki: Weapon Skill Damage', patterns = {'["\']?sekkanoki["\']?: weapon skill damage%s*%+?(%d+)%%?'} },
+    { stat = 'TP during evasion', patterns = {'tp during evasion%s*%+?(%d+)'} },
+    { stat = 'Mana Wall', patterns = {'["\']?mana wall["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'TP Gained when landing critical hits', patterns = {'tp gained when landing critical hits%s*%+?(%d+)'} },
+    { stat = 'Regen effects received', patterns = {'potency of ["\']?regen["\']? effects received%s*%+?(%d+)'} },
+    { stat = 'Vivacious Pulse potency', patterns = {'["\']?vivacious pulse["\']? potency%s*%+?(%d+)%%?'} },
+    { stat = 'Regen potency', patterns = {'["\']?regen["\']? potency%s*%+?(%d+)'} },
+    { stat = 'Phantom Roll duration', patterns = {'["\']?phantom roll["\']? effect duration%s*%+?(%d+)'} },
+    { stat = 'Phantom Roll XI HP/MP', patterns = {'["\']?phantom roll xi["\']?: recover hp and mp%s*%+?(%d+)%%?'} },
+    { stat = 'Phantom Roll', patterns = {'["\']?phantom roll["\']?%s*%+?(%d+)'} },
+    { stat = 'Chakra', patterns = {'["\']?chakra["\']?%s*%+?(%d+)'} },
+    { stat = 'Flourish recast time', patterns = {'["\']?flourish["\']? recast time%s*%-?(%d+)%%?'} },
+    { stat = 'Step duration', patterns = {'["\']?step["\']? duration%s*%+?(%d+)'} },
+    { stat = 'Additional ammo damage', patterns = {'additional ammo damage:%s*%+?(%d+)%%?'} },
+    { stat = 'Additional ammo accuracy', patterns = {'additional ammo accuracy%s*%+?(%d+)'} },
+    { stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} },
+    { stat = 'Chain Affinity recast time', patterns = {'["\']?chain affinity["\']? recast time%s*%-?(%d+)%%?'} },
+    { stat = 'Burst Affinity recast time', patterns = {'["\']?burst affinity["\']? recast time%s*%-?(%d+)%%?'} },
+	{ stat = 'Dispel', patterns = {'["\']?dispel["\']?%s*%+?(%d+)'} },
+    { stat = 'Erase', patterns = {'["\']?erase["\']?%s*%+?(%d+)'} },
+    { stat = 'Enfeebling Magic Effect', patterns = {'["\']?enfeebling magic effect["\']?%s*%+?(%d+)'} },
+    { stat = 'Wyvern: Lv.', patterns = {'wyvern:%s*lv%.%s*%+?(%d+)'} },
+	
 }
 
 -- UI Rendering Sections (Alphabetized)
@@ -772,6 +813,45 @@ windower.register_event('incoming text', function(original, modified, original_m
 end)
 
 -- ==============================================================================
+-- DEBUG: Stat Key Validator
+-- ==============================================================================
+local function validate_stat_keys()
+    -- 1. Build a quick lookup dictionary of all valid UI stats
+    local valid_stats = {}
+    for _, s in ipairs(stat_sequence) do
+        valid_stats[s.stat] = true
+    end
+
+    -- 2. Keep track of what we've already warned about to prevent chat spam
+    local flagged_mismatches = {}
+    local error_found = false
+
+    -- 3. Scan the entire loaded augment database
+    if augments then
+        for rank = 1, 30 do
+            if augments[rank] then
+                for item_id, paths in pairs(augments[rank]) do
+                    for path_name, stats in pairs(paths) do
+                        for stat_name, stat_val in pairs(stats) do
+                            -- If the stat isn't in our UI list, and we haven't flagged it yet...
+                            if not valid_stats[stat_name] and not flagged_mismatches[stat_name] then
+                                flagged_mismatches[stat_name] = true
+                                error_found = true
+                                windower.add_to_chat(167, "[GearInfo Debug] Unrecognized Database Key: '" .. tostring(stat_name) .. "'")
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if not error_found then
+        windower.add_to_chat(207, "[GearInfo Debug] Validation Complete: All database stat keys match the UI successfully!")
+    end
+end
+
+-- ==============================================================================
 -- Addon Commands & Help Menu
 -- ==============================================================================
 windower.register_event('addon command', function(command, ...)
@@ -848,7 +928,9 @@ windower.register_event('addon command', function(command, ...)
         windower.add_to_chat(207, ' //gi style vertical   : Changes the UI back to a stacked layout.')
         windower.add_to_chat(207, ' //gi help or //gi     : Displays this help menu.')
         windower.add_to_chat(207, ' Note: You can click and drag the UI windows anywhere on your screen!')
-    else
+    elseif command == 'validate' then
+        validate_stat_keys()
+	else
         windower.add_to_chat(207, 'GearInfo: Unknown command. Type //gi help for a list of commands.')
     end
 end)
