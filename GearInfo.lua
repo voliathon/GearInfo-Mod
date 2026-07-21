@@ -74,6 +74,7 @@ local stat_sequence = {
     { stat = 'Cure Potency II', patterns = {'["\']?cure["\']? potency ii%s*%+?(%d+)%%?'} },
     { stat = 'Cure Spellcasting Time', patterns = {'["\']?cure["\']? spellcasting time%s*%-?(%d+)%%?'} },
     { stat = 'Cursna', patterns = {'["\']?cursna["\']?%s*%+?(%d+)'} },
+	{ stat = 'Daken', patterns = {'["\']?daken["\']?%s*%+?(%d+)'} },	
     { stat = 'Damage Taken', patterns = {'["\']?damage taken["\']?%s*%-?(%d+)%%?', '["\']?dt["\']?%s*%-?(%d+)%%?'} },
     { stat = 'Defense', patterns = {'["\']?defense["\']?%s*%+?(%d+)', '["\']?def%.["\']?%s*%+?(%d+)', '["\']?def["\']?%s*:%s*(%d+)', '["\']?def["\']?%s*%+?(%d+)'} }, 
     { stat = 'Double Attack', patterns = {'["\']?double attack["\']?%s*%+?(%d+)%%?', '["\']?dbl%.%s*atk%.["\']?%s*%+?(%d+)%%?'} },
@@ -83,6 +84,7 @@ local stat_sequence = {
     { stat = 'Dual Wield', patterns = {'["\']?dual wield["\']?%s*%+?(%d+)'} },
     { stat = 'Elemental Magic Recast Delay', patterns = {'["\']?elemental magic recast delay["\']?%s*%-?(%d+)%%?'} },
     { stat = 'Enemy Critical Hit Rate', patterns = {'["\']?enemy critical hit rate["\']?%s*%-?(%d+)%%?'} },
+    { stat = 'Enfeebling Magic Duration', patterns = {'["\']?enfeebling magic effect duration["\']?%s*%+?(%d+)%%?', '["\']?enf%. mag%. eff%. dur%.["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Enfeebling Magic Effect', patterns = {'["\']?enfeebling magic effect["\']?%s*%+?(%d+)'} },
     { stat = 'Enhancing Magic Duration', patterns = {'["\']?enhancing magic effect duration["\']?%s*%+?(%d+)%%?', '["\']?enhancing magic duration["\']?%s*%+?(%d+)%%?', '["\']?enh%. mag%. eff%. dur%.["\']?%s*%+?(%d+)'} },
     { stat = 'Enmity', patterns = {'["\']?enmity["\']?%s*([%+%-]%s*%d+)'} }, 
@@ -90,10 +92,15 @@ local stat_sequence = {
     { stat = 'Fast Cast', patterns = {'["\']?fast cast["\']?%s*%+?(%d+)%%?'} },
     { stat = 'HP', patterns = {'["\']?hp["\']?%s*%+?(%d+)'} },
     { stat = 'Haste', patterns = {'["\']?haste["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Helix Effect Duration', patterns = {'["\']?helix eff%. duration["\']?%s*%+?(%d+)%%?', '["\']?helix effect duration["\']?%s*%+?(%d+)%%?'} },
+	{ stat = 'Kick Attacks', patterns = {'["\']?kick attacks["\']?%s*%+?(%d+)'} },
+    { stat = 'Luopan Duration', patterns = {'["\']?luopan duration["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Luopan: Damage Taken', patterns = {'luopan:%s*absorbs damage%s*%+?(%d+)%%?', 'luopan:%s*damage taken%s*%-?(%d+)%%?'} },
     { stat = 'MP', patterns = {'["\']?mp["\']?%s*%+?(%d+)'} },
     { stat = 'Magic Accuracy', patterns = {'["\']?mag%.%s*acc%.?["\']?%s*%+?(%d+)', '["\']?magic accuracy["\']?%s*%+?(%d+)', '["\']?m%.acc%.["\']?%s*%+?(%d+)'} },
     { stat = 'Magic Attack Bonus', patterns = {'["\']?mag%.%s*atk%.%s*bns%.["\']?%s*%+?(%d+)', '["\']?magic attack bonus["\']?%s*%+?(%d+)', '["\']?magic atk%. bonus["\']?%s*%+?(%d+)'} },
-    { stat = 'Magic Burst Damage', patterns = {'["\']?magic burst damage["\']?%s*%+?(%d+)%%?', '["\']?magic burst dmg%.["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Magic Burst Accuracy', patterns = {'["\']?magic burst accuracy["\']?%s*%+?(%d+)', '["\']?magic burst acc%.["\']?%s*%+?(%d+)'} },
+	{ stat = 'Magic Burst Damage', patterns = {'["\']?magic burst damage["\']?%s*%+?(%d+)%%?', '["\']?magic burst dmg%.["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Magic Burst Damage II', patterns = {'["\']?magic burst damage ii["\']?%s*%+?(%d+)%%?', '["\']?magic burst dmg%. ii["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Magic Critical Hit Rate', patterns = {'["\']?magic critical hit rate["\']?%s*%+?(%d+)%%?', '["\']?mag%.%s*crit%.%s*hit rate["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Magic Damage', patterns = {'["\']?magic damage["\']?%s*%+?(%d+)', '["\']?mag%.%s*dmg%.["\']?%s*%+?(%d+)'} },
@@ -135,7 +142,7 @@ local stat_sequence = {
     { stat = 'True Shot', patterns = {'["\']?true shot["\']?%s*%+?(%d+)'} },
     { stat = 'Waltz Potency', patterns = {'["\']?waltz["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Weapon Skill Damage', patterns = {'["\']?weapon skill damage["\']?%s*%+?(%d+)%%?'} },
-
+	
     -- Base Stats
     { stat = 'STR', patterns = {'["\']?str["\']?%s*%+?(%d+)'} },
     { stat = 'DEX', patterns = {'["\']?dex["\']?%s*%+?(%d+)'} },
@@ -146,15 +153,16 @@ local stat_sequence = {
     { stat = 'CHR', patterns = {'["\']?chr["\']?%s*%+?(%d+)'} },
 
     -- Pet/Avatar/Automaton Stats
-    { stat = 'Pet: Attack', patterns = {'pet:%s*attack%s*%+?(%d+)', 'pet:%s*atk%.%s*%+?(%d+)'} },
-    { stat = 'Pet: Ranged Accuracy', patterns = {'pet:%s*rng%.%s*acc%.?%s*%+?(%d+)', 'pet:%s*ranged accuracy%s*%+?(%d+)'} },
     { stat = 'Pet: Accuracy', patterns = {'pet:%s*accuracy%s*%+?(%d+)', 'pet:%s*acc%.%s*%+?(%d+)'} },
-    { stat = 'Pet: Mag. Acc.', patterns = {'pet:%s*mag%.%s*acc%.%s*%+?(%d+)', 'pet:%s*magic accuracy%s*%+?(%d+)'} },
-    { stat = 'Pet: Evasion', patterns = {'pet:%s*evasion%s*%+?(%d+)', 'pet:%s*eva%.%s*%+?(%d+)'} },
-    { stat = 'Pet: Magic Evasion', patterns = {'pet:%s*magic evasion%s*%+?(%d+)', 'pet:%s*mag%.%s*eva%.%s*%+?(%d+)'} },
-    { stat = 'Pet: DMG', patterns = {'pet:%s*dmg:%s*%+?(%d+)%%?', 'pet:%s*damage:%s*%+?(%d+)%%?'} },
-    { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage taken%s*%-?(%d+)%%?'} },
     { stat = 'Pet: All Attr.', patterns = {'pet:%s*all attr%.%s*%+?(%d+)'} },
+    { stat = 'Pet: Attack', patterns = {'pet:%s*attack%s*%+?(%d+)', 'pet:%s*atk%.%s*%+?(%d+)'} },
+    { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage taken%s*%-?(%d+)%%?'} },
+    { stat = 'Pet: DMG', patterns = {'pet:%s*dmg:%s*%+?(%d+)%%?', 'pet:%s*damage:%s*%+?(%d+)%%?'} },
+    { stat = 'Pet: Double Attack', patterns = {'pet:%s*["\']?double attack["\']?%s*%+?(%d+)%%?'} },	
+    { stat = 'Pet: Evasion', patterns = {'pet:%s*evasion%s*%+?(%d+)', 'pet:%s*eva%.%s*%+?(%d+)'} },
+    { stat = 'Pet: Mag. Acc.', patterns = {'pet:%s*mag%.%s*acc%.%s*%+?(%d+)', 'pet:%s*magic accuracy%s*%+?(%d+)'} },
+    { stat = 'Pet: Magic Evasion', patterns = {'pet:%s*magic evasion%s*%+?(%d+)', 'pet:%s*mag%.%s*eva%.%s*%+?(%d+)'} },
+    { stat = 'Pet: Ranged Accuracy', patterns = {'pet:%s*rng%.%s*acc%.?%s*%+?(%d+)', 'pet:%s*ranged accuracy%s*%+?(%d+)'} },
     
     { stat = 'Avatar: Accuracy', patterns = {'avatar:%s*accuracy%s*%+?(%d+)', 'avatar:%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Avatar: Mag. Acc.', patterns = {'avatar:%s*mag%.%s*acc%.%s*%+?(%d+)', 'avatar:%s*magic accuracy%s*%+?(%d+)'} },
@@ -163,9 +171,13 @@ local stat_sequence = {
     
     { stat = 'Automaton: Accuracy', patterns = {'automaton:%s*accuracy%s*%+?(%d+)', 'automaton:%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Automaton: Mag. Acc.', patterns = {'automaton:%s*mag%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*magic accuracy%s*%+?(%d+)'} },
+    { stat = 'Automaton: Magic Attack Bonus', patterns = {'automaton:%s*["\']?mag%. atk%. bns%.["\']?%s*%+?(%d+)', 'automaton:%s*["\']?magic attack bonus["\']?%s*%+?(%d+)'} },
     { stat = 'Automaton: R. Acc.', patterns = {'automaton:%s*r%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*rng%.%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Automaton: HP', patterns = {'automaton:%s*hp%s*%+?(%d+)'} },
     { stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} },
+	
+    { stat = 'Wyvern: Damage Taken', patterns = {'wyvern:%s*damage taken%s*%-?(%d+)%%?'} },
+
 	
 	{ stat = 'Sword Enhancement Spell Damage', patterns = {'["\']?sword enhancement spell damage["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Parrying Skill', patterns = {'["\']?parrying skill["\']?%s*%+?(%d+)'} },

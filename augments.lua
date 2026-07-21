@@ -9,7 +9,7 @@ local data_modules = {
     require('data.odyssey'),
     require('data.unity'),
     require('data.limbus'),
-    -- require('data.jse'),
+    require('data.jse'),
 	-- require('data.divergence'),
 }
 
