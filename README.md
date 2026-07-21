@@ -1,6 +1,6 @@
 # GearInfo
 
-$\color{red}{\text{WIP}}$ - Gotta manually add ranks for all divergence and this will be done-done. 7/21  Odyssey, Unity, JSE torques and Limbus are complete.
+$\color{red}{\text{WIP}}$ - Gotta manually add ranks for all rema and this will be done-done. 7/21  Odyssey, Unity, JSE torques, Divergence, and Limbus are complete.
 
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. **You will NOT need to incoorporate this into GearSwap. This is stand-alone.**
 
@@ -43,9 +43,10 @@ Type the following into your FFXI chat log:
 1. ~~Add Ody weapons and accessories.~~ DONE on 7/11/2026
 2. ~~Add Unity stuffs~~ DONE on 7/14/2026
 3. ~~Add Limbus stuffs~~ DONE on 7/20/2026
-4. Add Divergeance Stuffs
+4. ~~Add Divergeance Stuffs~~ DONE on 7/21/2026
 5. ~~Add JSE NQ, +1, +2 Stuffs~~ DONE on 7/21/2026
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
+7.   Add REMA Augments
 
 ## Usage
 1. Load the addon: `//lua load gearinfo`
