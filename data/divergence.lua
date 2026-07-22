@@ -22,9 +22,9 @@ local function expand_stats(rank_data)
     if rank_data.DT then full_stats['Damage Taken'] = rank_data.DT end
     if rank_data.SongCast then full_stats['Song spellcasting time'] = rank_data.SongCast end
     if rank_data.SongDA then full_stats['Song effects: Double Attack'] = rank_data.SongDA end
-    if rank_data.MBD2 then full_stats['Magic burst damage II'] = rank_data.MBD2 end
+    if rank_data.MBD2 then full_stats['Magic Burst Damage II'] = rank_data.MBD2 end
     if rank_data.MBAcc then full_stats['Magic Burst Accuracy'] = rank_data.MBAcc end
-    if rank_data.DrainAspir then full_stats['Drain and Aspir potency'] = rank_data.DrainAspir end
+    if rank_data.DrainAspir then full_stats['Drain and Aspir Potency'] = rank_data.DrainAspir end
     if rank_data.SwordEnhDmg then full_stats['Sword Enhancement Spell Damage'] = rank_data.SwordEnhDmg end
     if rank_data.ElemWSD then full_stats['Elemental weapon skill damage'] = rank_data.ElemWSD end
     if rank_data.PetDblDmg then full_stats['Pet: Chance of double damage'] = rank_data.PetDblDmg end
@@ -47,7 +47,7 @@ local function expand_stats(rank_data)
     if rank_data.Refresh then full_stats['Refresh'] = rank_data.Refresh end
     if rank_data.RegenRec then full_stats['Regen effects received'] = rank_data.RegenRec end
     if rank_data.VivPulse then full_stats['Vivacious Pulse potency'] = rank_data.VivPulse end
-    if rank_data.RegenPot then full_stats['Regen potency'] = rank_data.RegenPot end
+    if rank_data.RegenPot then full_stats['Regen Potency'] = rank_data.RegenPot end
     if rank_data.FC then full_stats['Fast Cast'] = rank_data.FC end
     if rank_data.PetDT then full_stats['Pet: Damage Taken'] = rank_data.PetDT end
     if rank_data.RollDur then full_stats['Phantom Roll duration'] = rank_data.RollDur end
