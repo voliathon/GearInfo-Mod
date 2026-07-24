@@ -270,6 +270,18 @@ table.sort(parse_sequence, function(a, b)
     return score_a > score_b 
 end)
 
+-- REMA Weapon IDs for UI Disclaimer
+local rema_ids = {
+    -- Relic
+    [20509]=true, [20583]=true, [20685]=true, [21683]=true, [21750]=true, [21756]=true, [21808]=true, [21857]=true, [21906]=true, [21954]=true, [21077]=true, [22060]=true, [22129]=true, [22140]=true,
+    -- Empyrean
+    [20512]=true, [20587]=true, [20689]=true, [21684]=true, [21752]=true, [21758]=true, [21810]=true, [21859]=true, [21908]=true, [21956]=true, [21079]=true, [22064]=true, [22130]=true, [22142]=true,
+    -- Aeonic
+    [20515]=true, [20594]=true, [20695]=true, [21694]=true, [21753]=true, [20843]=true, [20890]=true, [20935]=true, [20977]=true, [21025]=true, [21082]=true, [21147]=true, [22131]=true, [22143]=true,
+    -- Mythic/Ergon
+    [21757]=true, [20510]=true, [21078]=true, [22062]=true, [20686]=true, [20585]=true, [20687]=true, [21809]=true, [21751]=true, [20586]=true, [22139]=true, [21955]=true, [21907]=true, [21858]=true, [22063]=true, [20688]=true, [22141]=true, [20511]=true, [20584]=true, [22061]=true, [21080]=true, [21685]=true
+}
+
 -- ==============================================================================
 -- 3. Equipment Layout & Char Stats
 -- ==============================================================================
@@ -486,7 +498,8 @@ local function calculate_gear_stats()
                 
                 -- Populate details if it has stats OR if it's missing data
                 if next(current_item_stats) ~= nil or missing_data then
-                    item_details[slot_name] = { 
+                    item_details[slot_name] = {
+						id = item.id,
                         name = item_name, 
                         stats = current_item_stats,
                         rank = item_rank,
@@ -521,13 +534,22 @@ local function update_ui()
     
     local ui_text = " --- Gear Statistics --- (//gi hide)\n"
     
-    -- Check for missing augment data and stack warnings
+    -- Check for missing augment data and R15 REMAs
     local missing_items = {}
+    local has_r15_rema = false
+    
     for _, slot in ipairs(equip_slots) do
         local detail = item_details[slot]
-        if detail and detail.missing then
-            local rank_str = detail.rank > 0 and (" (Rank " .. detail.rank .. ")") or ""
-            table.insert(missing_items, detail.name .. rank_str)
+        if detail then
+            if detail.missing then
+                local rank_str = detail.rank > 0 and (" (Rank " .. detail.rank .. ")") or ""
+                table.insert(missing_items, detail.name .. rank_str)
+            end
+            
+            -- Detect if a Rank 15 REMA is currently equipped
+            if detail.id and rema_ids[detail.id] and detail.rank == 15 then
+                has_r15_rema = true
+            end
         end
     end
 
@@ -537,7 +559,14 @@ local function update_ui()
             ui_text = ui_text .. " \\cs(255,50,50)  - " .. item_name .. "\\cr\n"
         end
         ui_text = ui_text .. "\n"
-    else
+    end
+
+    -- Append the REMA Disclaimer in bright orange if detected
+    if has_r15_rema then
+        ui_text = ui_text .. " \\cs(255,165,0)[Note] R15 Ultimate Weapon Equipped!\\cr\n"
+        ui_text = ui_text .. " \\cs(255,165,0)Weapon Skill Damage stat includes the\\cr\n"
+        ui_text = ui_text .. " \\cs(255,165,0)boost for your specific REMA WS only.\\cr\n\n"
+    elseif #missing_items == 0 then
         ui_text = ui_text .. "\n"
     end
     
