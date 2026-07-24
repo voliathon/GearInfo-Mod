@@ -1,6 +1,6 @@
 # GearInfo
 
-$\color{red}{\text{WIP}}$ - Gotta manually add ranks for all rema and this will be done-done. 7/21  Odyssey, Unity, JSE torques, Divergence, and Limbus are complete.
+**Status: Complete** - Odyssey, Unity, JSE torques, Divergence, Limbus, and REMA are fully integrated.
 
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. **You will NOT need to incoorporate this into GearSwap. This is stand-alone.**
 
@@ -8,13 +8,18 @@ This version of GearInfo is a lightweight Windower addon designed to track and d
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 * **Odyssey, Unity, Limbus, Divergence, JSE Necks Rank Scaling:** Full support for Rank 1 through 30 (If applicable) path-based augment scaling via a dedicated `augments.lua` database, allowing perfect calculations of intermediate ranks. 
 * **Ghost Gear System:** Save a "ghost" snapshot of your stats in memory. Your ghost stats hover next to your active stats in brackets `[G: ...]` so you can rapidly compare gear sets in real-time.
-    * **Smart Comparisons:** The UI automatically calculates the difference between your active gear and your ghost snapshot, displaying a smooth, color-coded green $\color{green}{\text{▲}}$ or $\color{red}{\text{▼}}$ to instantly show you what you're gaining or losing.
+    * **Smart Comparisons:** The UI automatically calculates the difference between your active gear and your ghost snapshot, displaying a smooth, color-coded green ▲ or ▼ to instantly show you what you're gaining or losing.
 * **Customizable UI:** 
     * Toggle between **Vertical** (stacked) and **Horizontal** (side-by-side) layouts.
     * **Gear Stats:** Shows the total contribution of stats from your currently equipped gear.
     * **True Totals:** Accurately reflects your total character stats (white text) versus gear stats (green text).
     * **Detailed Log:** A 3-column breakdown showing exactly which items are contributing to your tracked stats.
 * **Persistence:** All UI windows are draggable and will remember their position and layout preferences on your screen per character.
+
+### ⚠️ REMA WeaponSkill Disclaimer
+Rank 15 Ultimate Weapons (Relic, Empyrean, Mythic, Ergon, Aeonic) provide massive damage boosts to **specific** Weapon Skills (e.g., *Victory Smite: Damage +10%*). To prevent the UI from becoming bloated with 40+ unique weapon skill names, **these specific bonuses are aggregated into the general `Weapon Skill Damage` tracker.** 
+
+When you see your Weapon Skill Damage increase upon equipping an R15 weapon, please be aware that this specific portion of the stat *only applies to the weapon's designated Weapon Skill!*
 
 <div align="center">
   <img src="examples/example1.png" alt="Cursna Set" />
@@ -37,16 +42,17 @@ Type the following into your FFXI chat log:
 | `//gi show` | Shows the Gear Statistics UI. |
 | `//gi style horizontal` | Changes the UI to a side-by-side layout. |
 | `//gi style vertical` | Changes the UI back to a stacked layout. |
+| `//gi validate` | Debug tool: Scans the database to ensure all stat keys match the UI dictionary. |
 | `//gi help` | Displays this help menu in your chat log. |
 
-## TODO
+## Completed Milestones
 1. ~~Add Ody weapons and accessories.~~ DONE on 7/11/2026
 2. ~~Add Unity stuffs~~ DONE on 7/14/2026
 3. ~~Add Limbus stuffs~~ DONE on 7/20/2026
 4. ~~Add Divergeance Stuffs~~ DONE on 7/21/2026
 5. ~~Add JSE NQ, +1, +2 Stuffs~~ DONE on 7/21/2026
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
-7.   Add REMA Augments
+7. ~~Add REMA Augments~~ DONE on 7/24/2026
 
 ## Usage
 1. Load the addon: `//lua load gearinfo`
@@ -57,4 +63,8 @@ Type the following into your FFXI chat log:
 6. Use the `//gi ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats.
 
 ## Technical Note
-GearInfo calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently polling the game's `/checkparam` function whenever equipment is changed, ensuring you have an accurate view of your total combat performance. To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. Path-based items rely on an extensive, dynamically generated `exceptions.lua` table to look up accurate fractional values for intermediate ranks.
+GearInfo calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently 
+polling the game's `/checkparam` function whenever equipment is changed, ensuring you have an accurate view of your total combat performance. 
+To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second 
+delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. Path-based items rely on an extensive, 
+dynamically generated `exceptions.lua` table to look up accurate fractional values for intermediate ranks.

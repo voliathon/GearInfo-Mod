@@ -2,7 +2,7 @@
 -- I redid the entire addon so @Copyright Voliathon 2026
 _addon.name = 'GearInfo'
 _addon.author = 'Voliathon'
-_addon.version = '1.2.0'
+_addon.version = '1.3.0'
 _addon.commands = {'gi', 'gearinfo'}
 
 local extdata = require('extdata')
@@ -67,6 +67,7 @@ local stat_sequence = {
     { stat = 'Additional ammo damage', patterns = {'additional ammo damage:%s*%+?(%d+)%%?'} },
     { stat = 'Afflatus Misery stored', patterns = {'["\']?afflatus misery["\']? stored%s*%+?(%d+)%%?'} },
     { stat = 'AGI', patterns = {'["\']?agi["\']?%s*%+?(%d+)'} },
+	{ stat = 'All Jumps damage', patterns = {'all jumps damage%s*%+?(%d+)%%?'} },
     { stat = 'Attack', patterns = {'["\']?attack["\']?%s*%+?(%d+)', '["\']?atk%.["\']?%s*%+?(%d+)'} },
     { stat = 'Automaton: Accuracy', patterns = {'automaton:%s*accuracy%s*%+?(%d+)', 'automaton:%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Automaton: HP', patterns = {'automaton:%s*hp%s*%+?(%d+)'} },
@@ -93,11 +94,14 @@ local stat_sequence = {
     { stat = 'CHR', patterns = {'["\']?chr["\']?%s*%+?(%d+)'} },
     { stat = 'Conserve MP', patterns = {'["\']?conserve mp["\']?%s*%+?(%d+)'} },
     { stat = 'Counter', patterns = {'["\']?counter["\']?%s*%+?(%d+)'} },
+	{ stat = 'Counter Damage', patterns = {'["\']?counter["\']? damage%s*%+?(%d+)%%?'} },	
+    { stat = 'Critical hit damage', patterns = {'critical hit damage%s*%+?(%d+)%%?'} },
     { stat = 'Critical Hit Rate', patterns = {'["\']?critical hit rate["\']?%s*%+?(%d+)%%?', '["\']?crit%.%s*hit rate["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Cure Potency', patterns = {'["\']?cure["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Cure Potency II', patterns = {'["\']?cure["\']? potency ii%s*%+?(%d+)%%?'} },
     { stat = 'Cure Spellcasting Time', patterns = {'["\']?cure["\']? spellcasting time%s*%-?(%d+)%%?'} },
     { stat = 'Cursna', patterns = {'["\']?cursna["\']?%s*%+?(%d+)'} },
+    { stat = 'Dagan potency', patterns = {'["\']?dagan["\']? potency%s*%+?(%d+)%%?'} },	
     { stat = 'Daken', patterns = {'["\']?daken["\']?%s*%+?(%d+)'} },
     { stat = 'Damage', patterns = {'["\']?damage["\']?%s*:%s*%+?(%d+)', 'dmg%.?%s*:%s*%+?(%d+)'} },
     { stat = 'Damage Taken', patterns = {'["\']?damage taken["\']?%s*%-?(%d+)%%?', '["\']?dt["\']?%s*%-?(%d+)%%?'} },
@@ -105,6 +109,7 @@ local stat_sequence = {
     { stat = 'DEX', patterns = {'["\']?dex["\']?%s*%+?(%d+)'} },
     { stat = 'Dispel', patterns = {'["\']?dispel["\']?%s*%+?(%d+)'} },
     { stat = 'Double Attack', patterns = {'["\']?double attack["\']?%s*%+?(%d+)%%?', '["\']?dbl%.%s*atk%.["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Double Attack Damage', patterns = {'["\']?double attack["\']? damage%s*%+?(%d+)%%?'} },	
     { stat = 'Double Shot', patterns = {'["\']?double shot["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Double Shot Damage', patterns = {'["\']?double shot["\']? damage%s*%+?(%d+)', '["\']?double shot dmg%.["\']?%s*%+?(%d+)'} },
     { stat = 'Drain and Aspir Potency', patterns = {'["\']?drain["\']? and ["\']?aspir["\']? potency%s*%+?(%d+)'} },
@@ -147,6 +152,8 @@ local stat_sequence = {
     { stat = 'MND', patterns = {'["\']?mnd["\']?%s*%+?(%d+)'} },
     { stat = 'Movement Speed', patterns = {'["\']?movement speed["\']?%s*%+?(%d+)%%?'} },
     { stat = 'MP', patterns = {'["\']?mp["\']?%s*%+?(%d+)'} },
+    { stat = 'Myrkr potency', patterns = {'["\']?myrkr["\']? potency%s*%+?(%d+)%%?'} },	
+    { stat = 'Ninjutsu casting time', patterns = {'ninjutsu casting time%s*%-?(%d+)%%?'} },	
     { stat = 'Ninjutsu recast time', patterns = {'ninjutsu recast time%s*%-?(%d+)%%?'} },
     { stat = 'Occ. inc. resist. to stat. ailments', patterns = {'["\']?occ%. inc%. resist%. to stat%. ailments["\']?%s*%+?(%d+)'} },
     { stat = 'Occ. quickens spellcasting', patterns = {'["\']?occ%. quickens spellcasting["\']?%s*%+?(%d+)%%?'} },
@@ -214,7 +221,7 @@ local stat_sequence = {
     { stat = 'Weapon Skill Damage', patterns = {'["\']?weapon skill damage["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Wyvern: Damage Taken', patterns = {'wyvern:%s*damage taken%s*%-?(%d+)%%?'} },
     { stat = 'Wyvern: HP', patterns = {'wyvern:%s*hp%s*%+?(%d+)'} },
-    { stat = 'Wyvern: Lv.', patterns = {'wyvern:%s*lv%.%s*%+?(%d+)'} },
+    { stat = 'Wyvern: Lv.', patterns = {'wyvern:%s*lv%.%s*%+?(%d+)'} }
 }
 
 -- UI Rendering Sections (Alphabetized)

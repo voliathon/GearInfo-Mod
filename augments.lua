@@ -11,7 +11,7 @@ local data_modules = {
     require('data.limbus'),
     require('data.jse'),
 	require('data.divergence'),
-	--require('data.rema'),
+	require('data.rema'),
 }
 
 -- Dynamically merge all loaded modules into the master rank table
