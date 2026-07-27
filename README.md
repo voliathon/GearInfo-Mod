@@ -1,4 +1,4 @@
-# GearInfo
+# GearInfo - Last updated July 26th 2026
 
 **Status: Complete** - Odyssey, Unity, JSE torques, Divergence, Limbus, and REMA are fully integrated.
 
