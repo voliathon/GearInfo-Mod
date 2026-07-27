@@ -111,7 +111,7 @@ rema_tables[15][21078] = { ['A'] = expand_stats({DMG=17, WSD=15, Acc=30, Macc=30
 rema_tables[15][22062] = { ['A'] = expand_stats({DMG=26, WSD=15, Acc=30, Macc=30}) }       -- Laevateinn
 rema_tables[15][20686] = { ['A'] = expand_stats({DMG=17, WSD=15, Acc=30, Macc=30}) }       -- Murgleis
 rema_tables[15][20585] = { ['A'] = expand_stats({DMG=15, WSD=15, Acc=30, Macc=30}) }       -- Vajra
-rema_tables[15][20687] = { ['A'] = expand_stats({DMG=20, Enmity=100, Acc=30, Macc=30}) }   -- Burtgang
+rema_tables[15][20687] = { ['A'] = expand_stats({DMG=20, Acc=30, Macc=30}) }   -- Burtgang
 rema_tables[15][21809] = { ['A'] = expand_stats({DMG=34, WSD=15, Acc=30, Macc=30}) }       -- Liberator
 rema_tables[15][21751] = { ['A'] = expand_stats({DMG=20, WSD=15, Acc=30, Macc=30}) }       -- Aymur
 rema_tables[15][20586] = { ['A'] = expand_stats({DMG=14, WSD=15, Acc=30, Macc=30}) }       -- Carnwenhan

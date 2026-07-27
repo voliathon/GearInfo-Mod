@@ -759,7 +759,7 @@ local function expand_stats(rank_data)
     if rank_data.DT then full_stats['Damage Taken'] = rank_data.DT end
     if rank_data.Counter then full_stats['Counter'] = rank_data.Counter end
     if rank_data.Regen then full_stats['Regen'] = rank_data.Regen end
-    if rank_data.OccRes then full_stats['Occ. inc. resist. to stat. ailments'] = rank_data.OccRes end
+    if rank_data.OccRes then full_stats['All status ailment resistance'] = rank_data.OccRes end
     if rank_data.TA then full_stats['Triple Attack'] = rank_data.TA end
     if rank_data.Eva then full_stats['Evasion'] = rank_data.Eva end
     if rank_data.CurePot then full_stats['Cure Potency'] = rank_data.CurePot end
