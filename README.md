@@ -1,4 +1,4 @@
-# GearInfo - Last updated July 26th 2026
+# GearInfo - Last updated July 27th 2026
 
 **Status: Complete** - Odyssey, Unity, JSE torques, Divergence, Limbus, and REMA are fully integrated.
 
@@ -55,7 +55,8 @@ Type the following into your FFXI chat log:
 5. ~~Add JSE NQ, +1, +2 Stuffs~~ DONE on 7/21/2026
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
 7. ~~Add REMA Augments~~ DONE on 7/24/2026
-8. Add Escha and Exceptions
+8. ~~Add Part 1 of Escha~~ DONE on 7/27/2026
+9. Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect
 
 ## Usage
 1. Load the addon: `//lua load gearinfo`
