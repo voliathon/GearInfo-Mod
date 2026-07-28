@@ -10,6 +10,7 @@ local res = require('resources')
 local config = require('config')
 local texts = require('texts')
 local augments = require('augments') -- Master Augment Merger
+local hidden_stats = require('data.misc')
 
 -- ==============================================================================
 -- Setup UI & Per-Character Persistence
@@ -67,10 +68,12 @@ local stat_sequence = {
     { stat = 'Additional ammo damage', patterns = {'additional ammo damage:%s*%+?(%d+)%%?'} },
     { stat = 'Afflatus Misery stored', patterns = {'["\']?afflatus misery["\']? stored%s*%+?(%d+)%%?'} },
     { stat = 'AGI', patterns = {'["\']?agi["\']?%s*%+?(%d+)'} },
-    { stat = 'All Jumps damage', patterns = {'all jumps damage%s*%+?(%d+)%%?'} },
+    { stat = 'Ailment Resistance Magic effect', patterns = {'ailment resistance magic effect%s*%+?(%d+)'} },
+	{ stat = 'All Jumps damage', patterns = {'all jumps damage%s*%+?(%d+)%%?'} },
 	{ stat = 'All resistances', patterns = {'all resistances%s*%+?(%d+)', 'res%. all ele%.%s*%+?(%d+)'} },
 	{ stat = 'All status ailment resistance', patterns = {'all status ailment resistance%s*%+?(%d+)', 'resistance to all status ailments%s*%+?(%d+)', '["\']?occ%. inc%. resist%. to stat%. ailments["\']?%s*%+?(%d+)'} },
-    { stat = 'Attack', patterns = {'["\']?attack["\']?%s*%+?(%d+)', '["\']?atk%.["\']?%s*%+?(%d+)'} },
+    { stat = 'Aquaveil Interruption(s)', patterns = {'aquaveil%s*interruption%(s%)%s*%+?(%d+)', 'aquaveil%s*%+?(%d+)%s*interruption'} },
+	{ stat = 'Attack', patterns = {'["\']?attack["\']?%s*%+?(%d+)', '["\']?atk%.["\']?%s*%+?(%d+)'} },
     { stat = 'Automaton: Accuracy', patterns = {'automaton:%s*accuracy%s*%+?(%d+)', 'automaton:%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Automaton: HP', patterns = {'automaton:%s*hp%s*%+?(%d+)'} },
     { stat = 'Automaton: Mag. Acc.', patterns = {'automaton:%s*mag%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*magic accuracy%s*%+?(%d+)'} },
@@ -103,6 +106,7 @@ local stat_sequence = {
     { stat = 'Cure Potency II', patterns = {'["\']?cure["\']? potency ii%s*%+?(%d+)%%?'} },
     { stat = 'Cure Spellcasting Time', patterns = {'["\']?cure["\']? spellcasting time%s*%-?(%d+)%%?'} },
     { stat = 'Cursna', patterns = {'["\']?cursna["\']?%s*%+?(%d+)'} },
+	{ stat = 'Cursna received', patterns = {'potency of %p?cursna%p? effects? received%s*%+?(%d+)', '%p?cursna%p? effects? received%s*%+?(%d+)', '%p?cursna%p? received%s*%+?(%d+)'} },
     { stat = 'Dagan potency', patterns = {'["\']?dagan["\']? potency%s*%+?(%d+)%%?'} },    
     { stat = 'Daken', patterns = {'["\']?daken["\']?%s*%+?(%d+)'} },
     { stat = 'Damage', patterns = {'["\']?damage["\']?%s*:%s*%+?(%d+)', 'dmg%.?%s*:%s*%+?(%d+)'} },
@@ -131,6 +135,7 @@ local stat_sequence = {
     { stat = 'Evasion', patterns = {'["\']?evasion["\']?%s*%+?(%d+)', '["\']?eva%.["\']?%s*%+?(%d+)'} },
     { stat = 'Fast Cast', patterns = {'["\']?fast cast["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Flourish recast time', patterns = {'["\']?flourish["\']? recast time%s*%-?(%d+)%%?'} },
+	{ stat = 'fTP Mod', patterns = {'ftp mod%s*%+?(%d+%.?%d*)'} },
     { stat = 'Haste', patterns = {'["\']?haste["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Healing Magic Skill', patterns = {'["\']?healing magic skill["\']?%s*%+?(%d+)'} },
     { stat = 'Healing magic recast delay', patterns = {'healing magic recast delay%s*%-?(%d+)%%?'} },
@@ -203,6 +208,7 @@ local stat_sequence = {
     { stat = 'Spell Interruption Rate', patterns = {'["\']?spell interruption rate down["\']?%s*%-?(%d+)%%?', '["\']?spell interruption rate["\']?%s*%-?(%d+)%%?', '["\']?sird["\']?%s*%-?(%d+)%%?'} },
     { stat = 'Step duration', patterns = {'["\']?step["\']? duration%s*%+?(%d+)'} },
     { stat = 'Stoneskin', patterns = {'["\']?stoneskin["\']?%s*%+?(%d+)'} },
+	{ stat = 'Stoneskin casting time', patterns = {'["\']?stoneskin["\']? casting time%s*([%+%-]?%d+)%%?'} },
     { stat = 'Store TP', patterns = {'["\']?store tp["\']?%s*%+?(%d+)'} },
     { stat = 'STR', patterns = {'["\']?str["\']?%s*%+?(%d+)'} },
     { stat = 'Subtle Blow', patterns = {'["\']?subtle blow["\']?%s*%+?(%d+)'} },
@@ -340,15 +346,77 @@ local function calculate_gear_stats()
                 local base_desc = res.item_descriptions[item.id]
                 if base_item then item_name = base_item.en end
                 
+                -- Add base description to parsing queue (Flattened to bypass hard line breaks)
+				-- I found this shit when working with Purity Ring... Ugggg
                 if base_desc and base_desc.en then
-                    for line in base_desc.en:gmatch("[^\r\n]+") do table.insert(strings_to_parse, line) end
+                    local flat_desc = string.gsub(base_desc.en, "[\r\n]+", " ")
+                    table.insert(strings_to_parse, flat_desc)
                 end
 
                 local decoded_data = extdata.decode(item)
-                if decoded_data and type(decoded_data.augments) == 'table' then
-                    for _, aug in ipairs(decoded_data.augments) do table.insert(strings_to_parse, aug) end
+                
+                -- 1. Determine Rank and Path EARLY
+                local missing_data = false
+                local item_rank = 0
+                local item_path = 'A' -- Default path
+
+                if augments and decoded_data then
+                    -- Primary Check: Native Windower extdata properties
+                    if decoded_data.rank and type(decoded_data.rank) == 'number' then
+                        item_rank = decoded_data.rank
+                    end
+                    if decoded_data.path then
+                        local path_map = {[0]='A', [1]='B', [2]='C', [3]='D'}
+                        if type(decoded_data.path) == 'number' then
+                            item_path = path_map[decoded_data.path] or 'A'
+                        elseif type(decoded_data.path) == 'string' then
+                            item_path = string.match(string.upper(decoded_data.path), "([A-D])") or 'A'
+                        end
+                    end
+
+                    -- Fallback Check: Aggressive string parsing for rank/path
+                    if type(decoded_data.augments) == 'table' then
+                        for _, aug in ipairs(decoded_data.augments) do
+                            local aug_lower = aug:lower()
+                            if item_rank == 0 then
+                                local rank_match = string.match(aug_lower, "rank[^%d]*(%d+)")
+                                if rank_match then item_rank = tonumber(rank_match) end
+                            end
+                            local path_match = string.match(aug_lower, "path[^a-d]*([a-d])") or string.match(aug_lower, "type[^a-d]*([a-d])")
+                            if path_match then item_path = string.upper(path_match) end
+                        end
+                    end
                 end
 
+                -- 2. Check Database for Authority
+                local has_db_entry = false
+                local db_stats_to_add = nil
+                
+                if item_rank > 0 and augments and augments[item_rank] and augments[item_rank][item.id] then
+                    local targeted_rank_table = augments[item_rank]
+                    local stat_source = targeted_rank_table[item.id]
+                    
+                    if stat_source[item_path] then
+                        db_stats_to_add = stat_source[item_path]
+                    elseif stat_source['A'] then
+                        db_stats_to_add = stat_source['A']
+                    end
+                    
+                    if db_stats_to_add then
+                        has_db_entry = true
+                    end
+                elseif item_rank > 0 then
+                    missing_data = true
+                end
+
+                -- 3. Append Extdata Augments ONLY if no Database entry exists
+                if decoded_data and type(decoded_data.augments) == 'table' then
+                    if not has_db_entry then
+                        for _, aug in ipairs(decoded_data.augments) do table.insert(strings_to_parse, aug) end
+                    end
+                end
+
+                -- 4. Parse the Strings (Base item description + random augments)
                 for _, text_line in ipairs(strings_to_parse) do
                     local current_line = text_line:lower() 
                     
@@ -438,71 +506,30 @@ local function calculate_gear_stats()
                     end
                 end
                 
-                -- Dynamic Rank & Path Injector
-                local missing_data = false
-                local item_rank = 0
-                local item_path = 'A' -- Default path
-
-                if augments then
-                    if decoded_data then
-                        -- Primary Check: Native Windower extdata properties
-                        if decoded_data.rank and type(decoded_data.rank) == 'number' then
-                            item_rank = decoded_data.rank
-                        end
-                        if decoded_data.path then
-                            local path_map = {[0]='A', [1]='B', [2]='C', [3]='D'}
-                            if type(decoded_data.path) == 'number' then
-                                item_path = path_map[decoded_data.path] or 'A'
-                            elseif type(decoded_data.path) == 'string' then
-                                item_path = string.match(string.upper(decoded_data.path), "([A-D])") or 'A'
-                            end
-                        end
-
-                        -- Fallback Check: Aggressive string parsing
-                        if type(decoded_data.augments) == 'table' then
-                            for _, aug in ipairs(decoded_data.augments) do
-                                local aug_lower = aug:lower()
-                                
-                                if item_rank == 0 then
-                                    local rank_match = string.match(aug_lower, "rank[^%d]*(%d+)")
-                                    if rank_match then item_rank = tonumber(rank_match) end
-                                end
-                                
-                                local path_match = string.match(aug_lower, "path[^a-d]*([a-d])") or string.match(aug_lower, "type[^a-d]*([a-d])")
-                                if path_match then item_path = string.upper(path_match) end
-                            end
+                -- 5. Inject the Database Stats
+                if has_db_entry and db_stats_to_add then
+                    for static_stat, static_val in pairs(db_stats_to_add) do
+                        if type(static_val) == 'number' and totals[static_stat] ~= nil then
+                            totals[static_stat] = totals[static_stat] + static_val
+                            current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
                         end
                     end
-
-                    -- Inject the stats and check for missing data
-                    if item_rank > 0 then
-                        if augments[item_rank] and augments[item_rank][item.id] then
-                            local targeted_rank_table = augments[item_rank]
-                            local stat_source = targeted_rank_table[item.id]
-                            
-                            if stat_source[item_path] then
-                                stat_source = stat_source[item_path]
-                            elseif stat_source['A'] then
-                                stat_source = stat_source['A']
-                            end
-                            
-                            for static_stat, static_val in pairs(stat_source) do
-                                if type(static_val) == 'number' and totals[static_stat] ~= nil then
-                                    totals[static_stat] = totals[static_stat] + static_val
-                                    current_item_stats[static_stat] = (current_item_stats[static_stat] or 0) + static_val
-                                end
-                            end
-                        else
-                            -- The item has a rank, but we have no data mapped for it!
-                            missing_data = true
+                end
+				
+				-- 6. Inject Hidden/Misc Stats (Always runs, stacks with everything else)
+                if hidden_stats and hidden_stats[item.id] then
+                    for h_stat, h_val in pairs(hidden_stats[item.id]) do
+                        if type(h_val) == 'number' and totals[h_stat] ~= nil then
+                            totals[h_stat] = totals[h_stat] + h_val
+                            current_item_stats[h_stat] = (current_item_stats[h_stat] or 0) + h_val
                         end
                     end
                 end
                 
-                -- Populate details if it has stats OR if it's missing data
+                -- 7. Populate details if it has stats OR if it's missing data
                 if next(current_item_stats) ~= nil or missing_data then
                     item_details[slot_name] = {
-						id = item.id,
+                        id = item.id,
                         name = item_name, 
                         stats = current_item_stats,
                         rank = item_rank,
@@ -597,14 +624,14 @@ local function update_ui()
                     elseif gear_diff < 0 then arrow_str = " \\cs(255,50,50)▼\\cr" end
                     
                     if g_gear_val ~= 0 or g_char_val ~= 0 then
-                        ghost_str = string.format(" \\cs(150,150,150)[G: %d (%d)]\\cr", g_char_val, g_gear_val)
+                        ghost_str = string.format(" \\cs(150,150,150)[G: %g (%g)]\\cr", g_char_val, g_gear_val)
                     end
                 else
                     if gear_val > g_gear_val then arrow_str = " \\cs(0,255,0)▲\\cr"
                     elseif gear_val < g_gear_val then arrow_str = " \\cs(255,50,50)▼\\cr" end
 
                     if g_gear_val ~= 0 then
-                        ghost_str = string.format(" \\cs(150,150,150)[G: %d]\\cr", g_gear_val)
+                        ghost_str = string.format(" \\cs(150,150,150)[G: %g]\\cr", g_gear_val)
                     end
                 end
             end
@@ -612,11 +639,11 @@ local function update_ui()
             if special_stats_map[stat] then
                 local char_val = char_stats[special_stats_map[stat]] or 0
                 if gear_val ~= 0 or char_val ~= 0 or ghost_str ~= "" then
-                    table.insert(lines, string.format(" %s: %d \\cs(0,255,0)(%d)\\cr%s%s", stat, char_val, gear_val, ghost_str, arrow_str))
+                    table.insert(lines, string.format(" %s: %g \\cs(0,255,0)(%g)\\cr%s%s", stat, char_val, gear_val, ghost_str, arrow_str))
                 end
             else
                 if gear_val ~= 0 or ghost_str ~= "" then
-                    table.insert(lines, string.format(" %s: %d%s%s", stat, gear_val, ghost_str, arrow_str))
+                    table.insert(lines, string.format(" %s: %g%s%s", stat, gear_val, ghost_str, arrow_str))
                 end
             end
         end

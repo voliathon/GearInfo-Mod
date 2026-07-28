@@ -12,6 +12,7 @@ local data_modules = {
     require('data.jse'),
 	require('data.divergence'),
 	require('data.rema'),
+	require('data.escha')
 }
 
 -- Dynamically merge all loaded modules into the master rank table
