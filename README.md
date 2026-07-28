@@ -1,6 +1,6 @@
 # GearInfo - Last updated July 27th 2026
 
-**Status: ** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha(Part1), REMA, and statless gear are fully integrated.
+**Status:** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha(Part1), REMA, and statless gear are fully integrated.
 
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. 
 
@@ -12,7 +12,7 @@ I was also limited to the data on bg-wiki.  //gi log will be your friend to veri
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
 * **Odyssey, Unity, Limbus, Divergence, JSE Necks Rank Scaling:** Full support for Rank 1 through 30 (If applicable) path-based augment scaling via a dedicated `augments.lua` database, allowing perfect calculations of intermediate ranks. 
 * **Ghost Gear System:** Save a "ghost" snapshot of your stats in memory. Your ghost stats hover next to your active stats in brackets `[G: ...]` so you can rapidly compare gear sets in real-time.
-    * **Smart Comparisons:** The UI automatically calculates the difference between your active gear and your ghost snapshot, displaying a smooth, color-coded green ▲ or ▼ to instantly show you what you're gaining or losing.
+    * **Smart Comparisons:** The UI automatically calculates the difference between your active gear and your ghost snapshot, displaying a smooth, color-coded green ▲ or color-coded red ▼ to instantly show you what you're gaining or losing.
 * **Customizable UI:** 
     * Toggle between **Vertical** (stacked) and **Horizontal** (side-by-side) layouts.
     * **Gear Stats:** Shows the total contribution of stats from your currently equipped gear.
@@ -58,7 +58,8 @@ Type the following into your FFXI chat log:
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
 7. ~~Add REMA Augments~~ DONE on 7/24/2026
 8. ~~Add Part 1 of Escha~~ DONE on 7/27/2026
-9. Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect
+9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~
+10. Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)
 
 ## Usage
 1. Load the addon: `//lua load gearinfo`
