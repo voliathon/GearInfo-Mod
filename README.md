@@ -62,12 +62,14 @@ Type the following into your FFXI chat log:
 10. Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)
 
 ## Usage
-1. Load the addon: `//lua load gearinfo`
-2. The UI windows will appear on your screen.
-3. **Click and drag** any window to move it where you prefer. Your layout is saved automatically.
-4. When you swap gear, the addon will detect the equipment change and update the stats automatically.
-5. If you want to see the breakdown of which items provide which stats, use `//gi log`.
-6. Use the `//gi ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats.
+1. Create a folder in addons called `gearinfo`
+2. Drop all of the files downloaded in this repo into `gearinfo` 
+3. From within the game in order to load the addon: `//lua load gearinfo`
+4. Type `//gi` for commands but `gi show` is the meat and potatoes
+5. **Click and drag** any window to move it where you prefer. Your layout is saved automatically.
+6. When you swap gear, the addon will detect the equipment change and update the stats automatically.
+7. If you want to see the breakdown of which items provide which stats, use `//gi log`.
+8. Use the `//gi ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats.
 
 ## Technical Note
 GearInfo calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently 
@@ -75,3 +77,7 @@ polling the game's `/checkparam` function whenever equipment is changed, ensurin
 To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second 
 delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. Path-based items rely on an extensive, 
 dynamically generated `exceptions.lua` table to look up accurate fractional values for intermediate ranks.
+
+## Special Thanks
+Thanks Zedoma and Navius for testing and giving me feedback for gear. The ghost idea came from Navius and I ran with it.
+
