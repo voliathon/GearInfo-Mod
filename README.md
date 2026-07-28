@@ -1,6 +1,6 @@
 # GearInfo - Last updated July 27th 2026
 
-**Status: Complete** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha(Part1), REMA, and statless gear are fully integrated.
+**Status: ** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha(Part1), REMA, and statless gear are fully integrated.
 
 This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items, ensuring your data is always accurate regardless of recent game updates or random gear rolls. 
 
