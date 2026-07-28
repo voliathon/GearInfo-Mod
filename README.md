@@ -65,7 +65,7 @@ Type the following into your FFXI chat log:
 1. Create a folder in addons called `gearinfo`
 2. Drop all of the files downloaded in this repo into `gearinfo` 
 3. From within the game in order to load the addon: `//lua load gearinfo`
-4. Type `//gi` for commands but `gi show` is the meat and potatoes
+4. Type `//gi` for commands but `//gi show` is the meat and potatoes
 5. **Click and drag** any window to move it where you prefer. Your layout is saved automatically.
 6. When you swap gear, the addon will detect the equipment change and update the stats automatically.
 7. If you want to see the breakdown of which items provide which stats, use `//gi log`.
