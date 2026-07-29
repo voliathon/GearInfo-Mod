@@ -1,12 +1,15 @@
-# GearInfo - Last updated July 27th 2026
+# GearInfo-Mod - Last updated July 29th 2026
+
+**🚨 IMPORTANT: NOT THE LEGACY GEARINFO 🚨**  
+*This is a completely rebuilt, standalone addon. It is designed to safely replace or run alongside the old, legacy "GearInfo" without breaking your existing GearSwap Luas. Legacy GearSwap files that heavily hardcoded the old addon will not crash or conflict, because this version uses a completely isolated folder (`GearInfo-Mod`) and command structure (`//gim`).*
 
 **Status:** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha(Part1), REMA, and statless gear are fully integrated.
 
-This version of GearInfo is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items(when applicable), ensuring your data is always accurate regardless of recent game updates or random gear rolls. I did have to create custom files and retrieve augments from BG-wiki that the community identified. All of that was manual entry death. Same for grabbing the ID of the equipment.  Death I say!
+This version of GearInfo-Mod is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items(when applicable), ensuring your data is always accurate regardless of recent game updates or random gear rolls. I did have to create custom files and retrieve augments from BG-wiki that the community identified. All of that was manual entry death. Same for grabbing the ID of the equipment.  Death I say!
 
-**You will NOT need to incoorporate this into GearSwap. This is stand-alone.**
+**You will NOT need to incorporate this into GearSwap. This is stand-alone.**
 
-I was also limited to the data on bg-wiki.  //gi log will be your friend to verify if something is missing
+I was also limited to the data on bg-wiki.  `//gim log` will be your friend to verify if something is missing
 
 ## Features
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
@@ -37,17 +40,17 @@ Type the following into your FFXI chat log:
 
 | Command | Description |
 | :--- | :--- |
-| `//gi refresh` | Forces a manual refresh of the UI and re-syncs character stats. |
-| `//gi ghost save` | Saves a snapshot of your current stats to compare against. |
-| `//gi ghost clear` | Deletes your saved Ghost Gear snapshot. |
-| `//gi ghost toggle` | Hides or shows your Ghost Gear display. |
-| `//gi log` | Toggles the visibility of the 3-column detailed item breakdown log. |
-| `//gi hide` | Hides the Gear Statistics UI completely. |
-| `//gi show` | Shows the Gear Statistics UI. |
-| `//gi style horizontal` | Changes the UI to a side-by-side layout. |
-| `//gi style vertical` | Changes the UI back to a stacked layout. |
-| `//gi validate` | Debug tool: Scans the database to ensure all stat keys match the UI dictionary. |
-| `//gi help` | Displays this help menu in your chat log. |
+| `//gim refresh` | Forces a manual refresh of the UI and re-syncs character stats. |
+| `//gim ghost save` | Saves a snapshot of your current stats to compare against. |
+| `//gim ghost clear` | Deletes your saved Ghost Gear snapshot. |
+| `//gim ghost toggle` | Hides or shows your Ghost Gear display. |
+| `//gim log` | Toggles the visibility of the 3-column detailed item breakdown log. |
+| `//gim hide` | Hides the Gear Statistics UI completely. |
+| `//gim show` | Shows the Gear Statistics UI. |
+| `//gim style horizontal` | Changes the UI to a side-by-side layout. |
+| `//gim style vertical` | Changes the UI back to a stacked layout. |
+| `//gim validate` | Debug tool: Scans the database to ensure all stat keys match the UI dictionary. |
+| `//gim help or //gim` | Displays this help menu in your chat log. |
 
 ## Completed Milestones
 1. ~~Add Ody weapons and accessories.~~ DONE on 7/11/2026
@@ -58,21 +61,21 @@ Type the following into your FFXI chat log:
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
 7. ~~Add REMA Augments~~ DONE on 7/24/2026
 8. ~~Add Part 1 of Escha~~ DONE on 7/27/2026
-9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~
+9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~ DONE
 10. Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)
 
 ## Usage
-1. Create a folder in addons called `gearinfo`
-2. Drop all of the files downloaded in this repo into `gearinfo` 
-3. From within the game in order to load the addon: `//lua load gearinfo`
-4. Type `//gi` for commands but `//gi show` is the meat and potatoes
+1. Create a folder in addons called `GearInfo-Mod`
+2. Drop all of the files downloaded in this repo into `GearInfo-Mod` 
+3. From within the game in order to load the addon: `//lua load GearInfo-Mod`
+4. Type `//gim` for commands but `//gim show` is the meat and potatoes
 5. **Click and drag** any window to move it where you prefer. Your layout is saved automatically.
 6. When you swap gear, the addon will detect the equipment change and update the stats automatically.
-7. If you want to see the breakdown of which items provide which stats, use `//gi log`.
-8. Use the `//gi ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats.
+7. If you want to see the breakdown of which items provide which stats, use `//gim log`.
+8. Use the `//gim ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats.
 
 ## Technical Note
-GearInfo calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently 
+GearInfo-Mod calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently 
 polling the game's `/checkparam` function whenever equipment is changed, ensuring you have an accurate view of your total combat performance. 
 To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second 
 delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. Path-based items rely on an extensive, 
@@ -80,4 +83,3 @@ dynamically generated `exceptions.lua` table to look up accurate fractional valu
 
 ## Special Thanks
 Thanks Zedoma and Navius for testing and giving me feedback for gear. The ghost idea came from Navius and I ran with it.
-
