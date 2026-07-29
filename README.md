@@ -32,7 +32,7 @@ When you see your Weapon Skill Damage increase upon equipping an R15 weapon, ple
   <img src="examples/example1.png" alt="Cursna Set" />
   <img src="examples/example2.png" alt="Phalanx Set" />
   <img src="examples/example3.png" alt="Savage Set" /><br>
-   <img src="examples/example6.png" alt="Ghost" />
+   <img src="examples/example7.png" alt="Ghost" />
 </div>
 
 ## Commands
