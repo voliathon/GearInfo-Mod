@@ -967,7 +967,7 @@ windower.register_event('addon command', function(command, ...)
             windower.add_to_chat(207, 'GearInfo: Usage: //gi style [horizontal|vertical]')
         end
     elseif command == 'help' then
-        windower.add_to_chat(207, ' --- GearInfo-Mod v1.4.0 Help ---')
+        windower.add_to_chat(207, ' --- GearInfo-Mod v1.5.0 Help ---')
         windower.add_to_chat(207, ' //gim refresh          : Manually refreshes UI and pulls new character stats.')
         windower.add_to_chat(207, ' //gim base             : Toggles the Base Stats (STR/DEX/etc.) UI window.')
         windower.add_to_chat(207, ' //gim ghost save       : Saves a snapshot of your current stats to compare against.')
