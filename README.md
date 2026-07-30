@@ -1,4 +1,4 @@
-# GearInfo-Mod - Last updated July 29th 2026
+# GearInfo-Mod - Last updated July 30th 2026
 
 **🚨 IMPORTANT: NOT THE LEGACY GEARINFO 🚨**  
 *This is a completely rebuilt, standalone addon. It is designed to safely replace or run alongside the old, legacy "GearInfo" without breaking your existing GearSwap Luas. Legacy GearSwap files that heavily hardcoded the old addon will not crash or conflict, because this version uses a completely isolated folder (`GearInfo-Mod`) and command structure (`//gim`).*
