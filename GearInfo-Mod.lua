@@ -809,9 +809,16 @@ windower.register_event('prerender', function()
     end
     
     if pending_checkparam > 0 and now > pending_checkparam then
-        pending_checkparam = 0
-        hide_next_checkparam = true
-        windower.send_command('checkparam <me>')
+        local info = windower.ffxi.get_info()
+        
+        -- If the user has a menu open, delay the checkparam by another 1 second
+        if info.menu_open then
+            pending_checkparam = now + 1.0
+        else
+            pending_checkparam = 0
+            hide_next_checkparam = true
+            windower.send_command('checkparam <me>')
+        end
     end
 end)
 
