@@ -15,8 +15,10 @@ local function expand_stats(rank_data)
     if rank_data.AGI then full_stats['AGI'] = rank_data.AGI end
     if rank_data.INT then full_stats['INT'] = rank_data.INT end
     if rank_data.MND then full_stats['MND'] = rank_data.MND end
+    if rank_data.CHR then full_stats['CHR'] = rank_data.CHR end
     
     -- Combat & Magic Stats
+    if rank_data.Damage then full_stats['Damage'] = rank_data.Damage end
     if rank_data.Acc then full_stats['Accuracy'] = rank_data.Acc end
     if rank_data.Atk then full_stats['Attack'] = rank_data.Atk end
     if rank_data.Racc then full_stats['Ranged Accuracy'] = rank_data.Racc end
@@ -27,9 +29,11 @@ local function expand_stats(rank_data)
     if rank_data.Meva then full_stats['Magic Evasion'] = rank_data.Meva end
     
     -- Defensive & Traits
+    if rank_data.DT then full_stats['Damage Taken'] = rank_data.DT end
     if rank_data.PDT then full_stats['Physical Damage Taken'] = rank_data.PDT end
     if rank_data.MDT then full_stats['Magic Damage Taken'] = rank_data.MDT end
     if rank_data.DA then full_stats['Double Attack'] = rank_data.DA end
+    if rank_data.TA then full_stats['Triple Attack'] = rank_data.TA end
     if rank_data.STP then full_stats['Store TP'] = rank_data.STP end
     if rank_data.Crit then full_stats['Critical Hit Rate'] = rank_data.Crit end
     if rank_data.SubtleBlow then full_stats['Subtle Blow'] = rank_data.SubtleBlow end
@@ -41,6 +45,7 @@ local function expand_stats(rank_data)
     if rank_data.Counter then full_stats['Counter'] = rank_data.Counter end
     if rank_data.Snapshot then full_stats['Snapshot'] = rank_data.Snapshot end
     if rank_data.RapidShot then full_stats['Rapid Shot'] = rank_data.RapidShot end
+    if rank_data.Recycle then full_stats['Recycle'] = rank_data.Recycle end
     if rank_data.Haste then full_stats['Haste'] = rank_data.Haste end
     
     -- Magic specific & Skill stats
@@ -52,7 +57,15 @@ local function expand_stats(rank_data)
     if rank_data.ShieldSkill then full_stats['Shield Skill'] = rank_data.ShieldSkill end
     if rank_data.ElemSkill then full_stats['Elemental Magic Skill'] = rank_data.ElemSkill end
     if rank_data.DarkSkill then full_stats['Dark Magic Skill'] = rank_data.DarkSkill end
+    if rank_data.BlueSkill then full_stats['Blue Magic Skill'] = rank_data.BlueSkill end
+    if rank_data.StringSkill then full_stats['String Instrument Skill'] = rank_data.StringSkill end
+    if rank_data.WindSkill then full_stats['Wind Instrument Skill'] = rank_data.WindSkill end
+    if rank_data.EnhSkill then full_stats['Enhancing Magic Skill'] = rank_data.EnhSkill end
+    if rank_data.EnfSkill then full_stats['Enfeebling Magic Skill'] = rank_data.EnfSkill end
+    if rank_data.HealSkill then full_stats['Healing Magic Skill'] = rank_data.HealSkill end
     if rank_data.Refresh then full_stats['Refresh'] = rank_data.Refresh end
+    if rank_data.AllSongs then full_stats['All songs'] = rank_data.AllSongs end
+    if rank_data.BloodBoon then full_stats['Blood Boon'] = rank_data.BloodBoon end
 
     -- Pet & Avatar Stats
     if rank_data.PetAcc then full_stats['Pet: Accuracy'] = rank_data.PetAcc end
@@ -62,12 +75,23 @@ local function expand_stats(rank_data)
     if rank_data.PetDT then full_stats['Pet: Damage Taken'] = rank_data.PetDT end
     if rank_data.PetDA then full_stats['Pet: Double Attack'] = rank_data.PetDA end
     if rank_data.PetHP then full_stats['Pet: HP'] = rank_data.PetHP end
+    if rank_data.PetMP then full_stats['Pet: MP'] = rank_data.PetMP end
     if rank_data.PetSTR then full_stats['Pet: STR'] = rank_data.PetSTR end
+    if rank_data.PetVIT then full_stats['Pet: VIT'] = rank_data.PetVIT end
     if rank_data.PetINT then full_stats['Pet: INT'] = rank_data.PetINT end
     if rank_data.PetRegen then full_stats['Pet: Regen'] = rank_data.PetRegen end
+    if rank_data.PetHaste then full_stats['Pet: Haste'] = rank_data.PetHaste end
+    if rank_data.PetEnmity then full_stats['Pet: Enmity'] = rank_data.PetEnmity end
     if rank_data.BPDmg then full_stats['Blood Pact Damage'] = rank_data.BPDmg end
     if rank_data.BPDelay then full_stats['Blood Pact ability delay'] = rank_data.BPDelay end
     if rank_data.Perp then full_stats['Avatar Perpetuation Cost'] = rank_data.Perp end
+    
+    -- Automaton Stats
+    if rank_data.AutoMelee then full_stats['Automaton Melee Skill'] = rank_data.AutoMelee end
+    if rank_data.AutoRanged then full_stats['Automaton Ranged Skill'] = rank_data.AutoRanged end
+    if rank_data.AutoMagic then full_stats['Automaton Magic Skill'] = rank_data.AutoMagic end
+    if rank_data.AutoCurePot then full_stats['Automaton: Cure Potency'] = rank_data.AutoCurePot end
+    if rank_data.AutoFC then full_stats['Automaton: Fast Cast'] = rank_data.AutoFC end
 
     return full_stats
 end
@@ -108,7 +132,7 @@ escha_tables[15][26846] = { ['A']=expand_stats({Acc=10, Atk=10, Enmity=4}), ['B'
 escha_tables[15][27022] = { ['A']=expand_stats({Acc=10, Atk=10, Enmity=4}), ['B']=expand_stats({HP=50, STR=10, Acc=10}), ['C']=expand_stats({HP=80, Enmity=7, CureRx=10}), ['D']=expand_stats({HP=50, ShieldSkill=10, PDT=-3}) } -- Souveran Handschuhs
 escha_tables[15][27198] = { ['A']=expand_stats({Acc=10, Atk=10, Enmity=4}), ['B']=expand_stats({HP=50, STR=10, Acc=10}), ['C']=expand_stats({HP=80, Enmity=7, CureRx=10}), ['D']=expand_stats({STR=10, VIT=10, Acc=15}) } -- Souveran Diechlings
 escha_tables[15][27374] = { ['A']=expand_stats({Acc=10, Atk=10, Enmity=4}), ['B']=expand_stats({HP=50, STR=10, Acc=10}), ['C']=expand_stats({HP=80, Enmity=7, CureRx=10}), ['D']=expand_stats({HP=50, Atk=20, MDT=-3}) } -- Souveran Schuhs
-escha_tables[15][26671] = { ['A']=expand_stats({Acc=13, Atk=12, Enmity=5}), ['B']=expand_stats({HP=65, STR=13, Acc=13}), ['C']=expand_stats({HP=105, Enmity=9, CureRx=15}), ['D']=expand_stats({HP=105, VIT=12, PDT=-4}) } -- Souveran Schaller +1 (Fixed Missing ID assumed 26671 based on surrounding logic)
+escha_tables[15][26671] = { ['A']=expand_stats({Acc=13, Atk=12, Enmity=5}), ['B']=expand_stats({HP=65, STR=13, Acc=13}), ['C']=expand_stats({HP=105, Enmity=9, CureRx=15}), ['D']=expand_stats({HP=105, VIT=12, PDT=-4}) } -- Souveran Schaller +1
 escha_tables[15][26847] = { ['A']=expand_stats({Acc=13, Atk=12, Enmity=5}), ['B']=expand_stats({HP=65, STR=13, Acc=13}), ['C']=expand_stats({HP=105, Enmity=9, CureRx=15}), ['D']=expand_stats({VIT=12, Atk=25, Refresh=3}) } -- Souveran Cuirass +1
 escha_tables[15][27023] = { ['A']=expand_stats({Acc=13, Atk=12, Enmity=5}), ['B']=expand_stats({HP=65, STR=13, Acc=13}), ['C']=expand_stats({HP=105, Enmity=9, CureRx=15}), ['D']=expand_stats({HP=65, ShieldSkill=15, PDT=-4}) } -- Souveran Handschuhs +1
 escha_tables[15][27199] = { ['A']=expand_stats({Acc=13, Atk=12, Enmity=5}), ['B']=expand_stats({HP=65, STR=13, Acc=13}), ['C']=expand_stats({HP=105, Enmity=9, CureRx=15}), ['D']=expand_stats({STR=12, VIT=12, Acc=20}) } -- Souveran Diechlings +1
@@ -140,7 +164,7 @@ escha_tables[15][25618] = { ['A']=expand_stats({MP=80, MND=12, Macc=20}), ['B']=
 escha_tables[15][25691] = { ['A']=expand_stats({MP=80, MND=12, Macc=20}), ['B']=expand_stats({MP=80, CureCast=-7, Enmity=-6}), ['C']=expand_stats({MP=80, SIRD=-12, CureCast=-7}), ['D']=expand_stats({MP=80, CurePot=6, ConserveMP=7}) } -- Kaykaus Bliaut +1
 escha_tables[15][27122] = { ['A']=expand_stats({MP=80, MND=12, Macc=20}), ['B']=expand_stats({MP=80, CureCast=-7, Enmity=-6}), ['C']=expand_stats({MP=80, SIRD=-12, CureCast=-7}), ['D']=expand_stats({MP=80, ConserveMP=7, FastCast=4}) } -- Kaykaus Cuffs +1
 escha_tables[15][27307] = { ['A']=expand_stats({MP=80, MND=12, Macc=20}), ['B']=expand_stats({MP=80, CureCast=-7, Enmity=-6}), ['C']=expand_stats({MP=80, SIRD=-12, CureCast=-7}), ['D']=expand_stats({INT=12, MAB=20, Enmity=-6}) } -- Kaykaus Tights +1
-escha_tables[15][27478] = { ['A']=expand_stats({MP=80, MND=12, Macc=20}), ['B']=expand_stats({MP=80, CureCast=-7, Enmity=-6}), ['C']=expand_stats({MP=80, SIRD=-12, CureCast=-7}), ['D']=expand_stats({Macc=20, CurePot=6, FastCast=4}) } -- Kaykaus Boots +1
+escha_tables[15][27478] = { ['A']=expand_stats({MP=80, MND=12, Macc=20}), ['B']=expand_stats({MP=80, CureCast=-7, EnEnmity=-6}), ['C']=expand_stats({MP=80, SIRD=-12, CureCast=-7}), ['D']=expand_stats({Macc=20, CurePot=6, FastCast=4}) } -- Kaykaus Boots +1
 
 -- ==============================================================================
 -- RAO SET (Rank 15)
@@ -225,5 +249,114 @@ escha_tables[15][25689] = { ['A']=expand_stats({MP=80, Macc=20, MAB=20}), ['B']=
 escha_tables[15][27120] = { ['A']=expand_stats({MP=80, Macc=20, MAB=20}), ['B']=expand_stats({MP=80, INT=12, Enmity=-6}), ['C']=expand_stats({INT=12, ElemSkill=20, DarkSkill=20}), ['D']=expand_stats({INT=12, Macc=20, MAB=20}) } -- Amalric Gages +1
 escha_tables[15][27305] = { ['A']=expand_stats({MP=80, Macc=20, MAB=20}), ['B']=expand_stats({MP=80, INT=12, Enmity=-6}), ['C']=expand_stats({INT=12, ElemSkill=20, DarkSkill=20}), ['D']=expand_stats({MP=80, MAB=25, Enmity=-6}) } -- Amalric Slops +1
 escha_tables[15][27476] = { ['A']=expand_stats({MP=80, Macc=20, MAB=20}), ['B']=expand_stats({MP=80, INT=12, Enmity=-6}), ['C']=expand_stats({INT=12, ElemSkill=20, DarkSkill=20}), ['D']=expand_stats({Macc=20, MAB=20, ConserveMP=7}) } -- Amalric Nails +1
+
+-- ==============================================================================
+-- NIBIRU WEAPONS (Rank 15)
+-- ==============================================================================
+escha_tables[15][20983] = { ['A']=expand_stats({Atk=15, Acc=15, Racc=15}), ['B']=expand_stats({Acc=15, Racc=15, STP=5}), ['C']=expand_stats({INT=7, Macc=15, MAB=15}), ['D']=expand_stats({Eva=20, Meva=20, Enmity=4}) } -- Mijin
+escha_tables[15][20710] = { ['A']=expand_stats({DEX=10, Acc=20, Macc=15}), ['B']=expand_stats({STR=10, Atk=20, STP=3}), ['C']=expand_stats({Macc=15, MAB=15, Meva=20}), ['D']=expand_stats({HP=50, DA=3, FastCast=5}) } -- Nibiru Blade
+escha_tables[15][21216] = { ['A']=expand_stats({AGI=10, Racc=25, Enmity=-6}), ['B']=expand_stats({HP=50, Ratk=25, RapidShot=10}), ['C']=expand_stats({AGI=10, Racc=15, Ratk=15}), ['D']=expand_stats({Ratk=20, Recycle=15, STP=5}) } -- Nibiru Bow
+escha_tables[15][20848] = { ['A']=expand_stats({HP=50, STR=10, Acc=25}), ['B']=expand_stats({Atk=20, Enmity=4, DA=3}), ['C']=expand_stats({VIT=10, Eva=20, Counter=3}), ['D']=expand_stats({HP=80, Enmity=7, PDT=-3}) } -- Nibiru Chopper
+escha_tables[15][21092] = { ['A']=expand_stats({MND=10, Macc=15, CurePot=15}), ['B']=expand_stats({MP=50, INT=10, MAB=15}), ['C']=expand_stats({Acc=15, Macc=15, FastCast=3}), ['D']=expand_stats({MP=50, PetDT=-3, PetRegen=2}) } -- Nibiru Cudgel
+escha_tables[15][21699] = { ['A']=expand_stats({STR=10, Atk=25, Macc=15}), ['B']=expand_stats({Acc=10, Atk=15, STP=5}), ['C']=expand_stats({Eva=20, Meva=20, FastCast=5}), ['D']=expand_stats({VIT=10, Acc=25, PDT=-4}) } -- Nibiru Faussar
+escha_tables[15][21273] = { ['A']=expand_stats({STR=10, Racc=15, STP=3}), ['B']=expand_stats({HP=50, AGI=10, Racc=20}), ['C']=expand_stats({STR=10, Racc=15, Ratk=15}), ['D']=expand_stats({STR=15, AGI=7, STP=5}) } -- Nibiru Gun
+escha_tables[15][21399] = { ['A']=expand_stats({MP=50, Macc=10, AllSongs=2}), ['B']=expand_stats({HP=50, CHR=10, AllSongs=2}), ['C']=expand_stats({MP=50, CurePot=5, AllSongs=2}), ['D']=expand_stats({Meva=20, PDT=-3, MDT=-3}) } -- Nibiru Harp
+escha_tables[15][20600] = { ['A']=expand_stats({Acc=20, Atk=15, Eva=20}), ['B']=expand_stats({DEX=7, Atk=20, STP=3}), ['C']=expand_stats({STR=15, DEX=10, CHR=10}), ['D']=expand_stats({MP=50, Meva=20, FastCast=5}) } -- Nibiru Knife
+escha_tables[15][20939] = { ['A']=expand_stats({STR=10, Acc=20, DA=3}), ['B']=expand_stats({HP=50, Acc=15, Atk=15}), ['C']=expand_stats({PetHP=100, PetAcc=20, PetAtk=20}), ['D']=expand_stats({Acc=20, PetAcc=20, STP=5}) } -- Nibiru Lance
+escha_tables[15][20524] = { ['A']=expand_stats({Acc=25, STR=7, SubtleBlow=7}), ['B']=expand_stats({HP=50, Atk=20, STP=3}), ['C']=expand_stats({Eva=20, Enmity=7, PDT=-3}), ['D']=expand_stats({AutoMelee=20, AutoRanged=20, AutoMagic=20}) } -- Nibiru Sainti
+escha_tables[15][27642] = { ['A']=expand_stats({HP=80, Enmity=7, PDT=-5}), ['B']=expand_stats({HP=80, MP=80, FastCast=7}), ['C']=expand_stats({MND=15, CurePot=5, CureRx=5}), ['D']=expand_stats({Acc=15, Atk=15, STP=5}) } -- Nibiru Shield
+escha_tables[15][20895] = { ['A']=expand_stats({STR=10, Atk=25, INT=7}), ['B']=expand_stats({Atk=20, MAB=25, FastCast=5}), ['C']=expand_stats({Acc=20, Atk=15, STP=3}), ['D']=expand_stats({Macc=20, MAB=15, Refresh=1}) } -- Nibiru Sickle
+escha_tables[15][21156] = { ['A']=expand_stats({MP=80, MAB=25, Enmity=-5}), ['B']=expand_stats({MDT=-3, MND=10, Macc=25}), ['C']=expand_stats({PetRegen=2, PetMacc=20, PetMAB=25}), ['D']=expand_stats({PetAcc=20, PetAtk=20, PetDA=3}) } -- Nibiru Staff
+escha_tables[15][20801] = { ['A']=expand_stats({STR=10, Atk=20, PetAtk=20}), ['B']=expand_stats({Acc=15, Atk=15, STP=5}), ['C']=expand_stats({PetAtk=25, PetMAB=15, PetEnmity=7}), ['D']=expand_stats({CHR=15, PetHaste=3, PetDA=3}) } -- Nibiru Tabar
+escha_tables[15][21031] = { ['A']=expand_stats({DEX=7, Acc=20, STP=5}), ['B']=expand_stats({Atk=15, SubtleBlow=7, DA=3}), ['C']=expand_stats({AGI=10, Racc=15, Ratk=20}), ['D']=expand_stats({Eva=20, Meva=20, PDT=-3}) } -- Sensui
+
+-- ==============================================================================
+-- ESCHA - RU'AUN WEAPONS (Rank 15)
+-- ==============================================================================
+escha_tables[15][20979] = { ['A']=expand_stats({Damage=15, STR=15, Atk=15}), ['B']=expand_stats({Damage=15, STR=15, Acc=10}), ['C']=expand_stats({Damage=15, Acc=15, Atk=15}), ['D']=expand_stats({Damage=17, Acc=15, Racc=15}) } -- Aizushintogo
+escha_tables[15][21150] = { ['A']=expand_stats({MP=80, INT=20, MAB=20}), ['B']=expand_stats({MND=20, Macc=20, CurePot=10}), ['C']=expand_stats({INT=15, MAB=15, Macc=15}), ['D']=expand_stats({Macc=20, EnhSkill=15, EnfSkill=15}) } -- Akademos
+escha_tables[15][21698] = { ['A']=expand_stats({Damage=30, STR=20, Atk=20}), ['B']=expand_stats({Damage=30, Acc=20, Atk=20}), ['C']=expand_stats({Damage=30, Atk=20, Enmity=7}), ['D']=expand_stats({Damage=32, STP=7, Enmity=7}) } -- Bidenhander
+escha_tables[15][21482] = { ['A']=expand_stats({Damage=15, AGI=15, Ratk=15}), ['B']=expand_stats({Damage=15, AGI=15, Racc=15}), ['C']=expand_stats({Damage=15, Racc=15, Ratk=15}), ['D']=expand_stats({Damage=15, Ratk=15, MAB=15}) } -- Compensator
+escha_tables[15][20892] = { ['A']=expand_stats({Damage=30, STR=20, Atk=20}), ['B']=expand_stats({Damage=30, Atk=20, STP=3}), ['C']=expand_stats({Damage=30, Atk=20, DarkSkill=15}), ['D']=expand_stats({Damage=32, MP=80, STR=20}) } -- Deathbane
+escha_tables[15][20702] = { ['A']=expand_stats({Damage=15, Acc=15, Atk=15}), ['B']=expand_stats({Damage=15, Acc=15, Macc=15}), ['C']=expand_stats({Damage=15, Macc=15, MAB=15}), ['D']=expand_stats({Macc=15, MAB=20, Refresh=1}) } -- Emissary
+escha_tables[15][20597] = { ['A']=expand_stats({Damage=15, STR=15, Atk=15}), ['B']=expand_stats({Damage=15, STR=15, Acc=10}), ['C']=expand_stats({Damage=15, DEX=15, SubtleBlow=7}), ['D']=expand_stats({Damage=17, Eva=15, Meva=15}) } -- Enchufla
+escha_tables[15][21149] = { ['A']=expand_stats({Enmity=-6, PetMAB=30, PetDT=-4}), ['B']=expand_stats({SumSkill=15, PetMacc=30, PetDT=-4}), ['C']=expand_stats({MP=50, PetMAB=20, PetMacc=20}), ['D']=expand_stats({PetSTR=15, PetAtk=25, PetDA=4}) } -- Espiritus
+escha_tables[15][20519] = { ['A']=expand_stats({Damage=15, STR=20, Atk=20}), ['B']=expand_stats({Damage=15, STR=20, Acc=15}), ['C']=expand_stats({Damage=15, Atk=20, Enmity=-5}), ['D']=expand_stats({Damage=17, HP=80, VIT=15}) } -- Hammerfists
+escha_tables[15][21027] = { ['A']=expand_stats({Damage=30, STR=20, Atk=20}), ['B']=expand_stats({Damage=30, STR=20, Acc=15}), ['C']=expand_stats({Damage=30, Atk=20, Acc=20}), ['D']=expand_stats({AGI=20, Racc=25, Recycle=15}) } -- Ichigohitofuri
+escha_tables[15][20845] = { ['A']=expand_stats({Damage=30, STR=20, Atk=20}), ['B']=expand_stats({Damage=30, STR=20, Acc=15}), ['C']=expand_stats({Damage=30, Atk=20, Acc=20}), ['D']=expand_stats({Damage=32, STR=15, VIT=15}) } -- Instigator
+escha_tables[15][20701] = { ['A']=expand_stats({Damage=15, STR=15, Atk=15}), ['B']=expand_stats({Damage=15, STR=15, Acc=15}), ['C']=expand_stats({Damage=15, Atk=15, MAB=15}), ['D']=expand_stats({BlueSkill=15, Macc=15, MAB=15}) } -- Iris
+escha_tables[15][20599] = { ['A']=expand_stats({Damage=15, CHR=15, Macc=15}), ['B']=expand_stats({Damage=15, CHR=15, Enmity=-5}), ['C']=expand_stats({MP=60, Macc=20, Refresh=1}), ['D']=expand_stats({Macc=15, StringSkill=10, WindSkill=10}) } -- Kali
+escha_tables[15][21151] = { ['A']=expand_stats({MP=80, INT=20, MAB=20}), ['B']=expand_stats({MP=80, Macc=20, FastCast=5}), ['C']=expand_stats({INT=15, MAB=15, Macc=15}), ['D']=expand_stats({Macc=20, EnfSkill=15, DarkSkill=15}) } -- Lathi
+escha_tables[15][20520] = { ['A']=expand_stats({Damage=15, STR=20, Atk=20}), ['B']=expand_stats({Damage=15, STR=20, Acc=20}), ['C']=expand_stats({Damage=15, PetAtk=25, PetHaste=3}), ['D']=expand_stats({PetAtk=25, PetAcc=25, PetDT=-3}) } -- Midnights
+escha_tables[15][20700] = { ['A']=expand_stats({Damage=15, STR=15, Atk=15}), ['B']=expand_stats({Damage=15, STR=15, Acc=10}), ['C']=expand_stats({Damage=15, Acc=15, Atk=15}), ['D']=expand_stats({Damage=17, STR=15, VIT=15}) } -- Nixxer
+escha_tables[15][21084] = { ['A']=expand_stats({MP=80, CurePot=15, Enmity=-5}), ['B']=expand_stats({MND=15, Macc=15, CurePot=15}), ['C']=expand_stats({MAB=15, Macc=15, CurePot=15}), ['D']=expand_stats({HealSkill=15, CurePot=10, CureCast=-7}) } -- Queller Rod
+escha_tables[15][20937] = { ['A']=expand_stats({Damage=30, STR=20, Atk=20}), ['B']=expand_stats({Damage=30, STR=20, Acc=15}), ['C']=expand_stats({Damage=30, VIT=15, Atk=20}), ['D']=expand_stats({Damage=32, Atk=20, Enmity=-5}) } -- Rhomphaia
+escha_tables[15][20598] = { ['A']=expand_stats({Damage=15, STR=15, Atk=15}), ['B']=expand_stats({Damage=15, STR=15, Acc=10}), ['C']=expand_stats({Damage=15, Acc=15, Atk=15}), ['D']=expand_stats({TA=2, DualWield=5, DEX=15}) } -- Shijo
+escha_tables[15][20797] = { ['A']=expand_stats({Damage=15, STR=15, Atk=15}), ['B']=expand_stats({Damage=15, STR=15, Acc=15}), ['C']=expand_stats({Damage=15, PetAcc=20, PetAtk=20}), ['D']=expand_stats({Damage=15, PetMAB=15, PetRegen=2}) } -- Skullrender
+escha_tables[15][21085] = { ['A']=expand_stats({MP=60, INT=15, MAB=15}), ['B']=expand_stats({MP=60, INT=15, Macc=15}), ['C']=expand_stats({INT=15, MAB=10, Refresh=1}), ['D']=expand_stats({Macc=20, PetDT=-4, FastCast=5}) } -- Solstice
+escha_tables[15][21215] = { ['A']=expand_stats({Damage=15, AGI=15, Ratk=15}), ['B']=expand_stats({Damage=15, AGI=15, Racc=15}), ['C']=expand_stats({Damage=15, Racc=15, Ratk=15}), ['D']=expand_stats({Damage=15, Ratk=15, Crit=3}) } -- Vijaya Bow
+
+-- ==============================================================================
+-- DESPAIR SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26792] = { ['A']=expand_stats({HP=50, VIT=10, CureRx=5}), ['B']=expand_stats({STR=12, VIT=7, Haste=2}), ['C']=expand_stats({Acc=10, PetVIT=7, PetDT=-3}), ['D']=expand_stats({STR=15, Enmity=7, STP=3}) } -- Despair Helm
+escha_tables[15][26948] = { ['A']=expand_stats({HP=50, VIT=10, CureRx=5}), ['B']=expand_stats({STR=12, VIT=7, Haste=2}), ['C']=expand_stats({Acc=10, PetVIT=7, PetDT=-3}), ['D']=expand_stats({Atk=25, Meva=20, DA=3}) } -- Despair Mail
+escha_tables[15][27098] = { ['A']=expand_stats({HP=50, VIT=10, CureRx=5}), ['B']=expand_stats({STR=12, VIT=7, Haste=2}), ['C']=expand_stats({Acc=10, PetVIT=7, PetDT=-3}), ['D']=expand_stats({Racc=25, Ratk=20, Recycle=10}) } -- Despair Finger Gauntlets
+escha_tables[15][27283] = { ['A']=expand_stats({HP=50, VIT=10, CureRx=5}), ['B']=expand_stats({STR=12, VIT=7, Haste=2}), ['C']=expand_stats({Acc=10, PetVIT=7, PetDT=-3}), ['D']=expand_stats({AGI=10, Eva=20, SubtleBlow=7}) } -- Despair Cuisses
+escha_tables[15][27458] = { ['A']=expand_stats({HP=50, VIT=10, CureRx=5}), ['B']=expand_stats({STR=12, VIT=7, Haste=2}), ['C']=expand_stats({Acc=10, PetVIT=7, PetDT=-3}), ['D']=expand_stats({DEX=10, STR=7, PDT=-3}) } -- Despair Greaves
+
+-- ==============================================================================
+-- RAWHIDE SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26794] = { ['A']=expand_stats({DEX=10, STR=7, INT=7}), ['B']=expand_stats({HP=50, Acc=15, Eva=20}), ['C']=expand_stats({Acc=15, PetAcc=15, PetDA=3}), ['D']=expand_stats({Atk=15, PetMacc=20, PetMAB=15}) } -- Rawhide Mask
+escha_tables[15][26950] = { ['A']=expand_stats({DEX=10, STR=7, INT=7}), ['B']=expand_stats({HP=50, Acc=15, Eva=20}), ['C']=expand_stats({Acc=15, PetAcc=15, PetDA=3}), ['D']=expand_stats({HP=50, SubtleBlow=7, TA=2}) } -- Rawhide Vest
+escha_tables[15][27100] = { ['A']=expand_stats({DEX=10, STR=7, INT=7}), ['B']=expand_stats({HP=50, Acc=15, Eva=20}), ['C']=expand_stats({Acc=15, PetAcc=15, PetDA=3}), ['D']=expand_stats({Macc=15, INT=7, MND=7}) } -- Rawhide Gloves
+escha_tables[15][27285] = { ['A']=expand_stats({DEX=10, STR=7, INT=7}), ['B']=expand_stats({HP=50, Acc=15, Eva=20}), ['C']=expand_stats({Acc=15, PetAcc=15, PetDA=3}), ['D']=expand_stats({MP=50, FastCast=5, Refresh=1}) } -- Rawhide Trousers
+escha_tables[15][27460] = { ['A']=expand_stats({DEX=10, STR=7, INT=7}), ['B']=expand_stats({HP=50, Acc=15, Eva=20}), ['C']=expand_stats({Acc=15, PetAcc=15, PetDA=3}), ['D']=expand_stats({STR=10, Atk=15, STP=5}) } -- Rawhide Boots
+
+-- ==============================================================================
+-- ESCHITE SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26791] = { ['A']=expand_stats({HP=80, Enmity=7, PDT=-4}), ['B']=expand_stats({MP=80, Acc=10, Enmity=7}), ['C']=expand_stats({Meva=15, SIRD=-15, Enmity=7}), ['D']=expand_stats({STR=9, VIT=7, CurePot=7}) } -- Eschite Helm
+escha_tables[15][26947] = { ['A']=expand_stats({HP=80, Enmity=7, PDT=-4}), ['B']=expand_stats({MP=80, Acc=10, Enmity=7}), ['C']=expand_stats({Meva=15, SIRD=-15, Enmity=7}), ['D']=expand_stats({Atk=15, VIT=7, DT=-4}) } -- Eschite Breastplate
+escha_tables[15][27097] = { ['A']=expand_stats({HP=80, Enmity=7, PDT=-4}), ['B']=expand_stats({MP=80, Acc=10, Enmity=7}), ['C']=expand_stats({Meva=15, SIRD=-15, Enmity=7}), ['D']=expand_stats({Acc=20, DA=4, Enmity=7}) } -- Eschite Gauntlets
+escha_tables[15][27282] = { ['A']=expand_stats({HP=80, Enmity=7, PDT=-4}), ['B']=expand_stats({MP=80, Acc=10, Enmity=7}), ['C']=expand_stats({Meva=15, SIRD=-15, Enmity=7}), ['D']=expand_stats({MAB=25, ConserveMP=6, FastCast=5}) } -- Eschite Cuisses
+escha_tables[15][27457] = { ['A']=expand_stats({HP=80, Enmity=7, PDT=-4}), ['B']=expand_stats({MP=80, Acc=10, Enmity=7}), ['C']=expand_stats({Meva=15, SIRD=-15, Enmity=7}), ['D']=expand_stats({STR=15, HP=50, STP=5}) } -- Eschite Greaves
+
+-- ==============================================================================
+-- NAGA SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26793] = { ['A']=expand_stats({HP=50, VIT=10, Eva=20}), ['B']=expand_stats({PetMP=80, AutoCurePot=4, AutoFC=3}), ['C']=expand_stats({Acc=15, Racc=25, Enmity=-6}), ['D']=expand_stats({HP=80, DEX=10, Atk=20}) } -- Naga Somen
+escha_tables[15][26949] = { ['A']=expand_stats({HP=50, VIT=10, Eva=20}), ['B']=expand_stats({PetMP=80, AutoCurePot=4, AutoFC=3}), ['C']=expand_stats({Acc=15, Racc=25, Enmity=-6}), ['D']=expand_stats({PetMP=80, PetMAB=20, PetMacc=20}) } -- Naga Samue
+escha_tables[15][27099] = { ['A']=expand_stats({HP=50, VIT=10, Eva=20}), ['B']=expand_stats({PetMP=80, AutoCurePot=4, AutoFC=3}), ['C']=expand_stats({Acc=15, Racc=25, Enmity=-6}), ['D']=expand_stats({Atk=20, Ratk=25, Crit=4}) } -- Naga Tekko
+escha_tables[15][27284] = { ['A']=expand_stats({HP=50, VIT=10, Eva=20}), ['B']=expand_stats({PetMP=80, AutoCurePot=4, AutoFC=3}), ['C']=expand_stats({Acc=15, Racc=25, Enmity=-6}), ['D']=expand_stats({PetHP=100, PetAcc=25, PetAtk=25}) } -- Naga Hakama
+escha_tables[15][27459] = { ['A']=expand_stats({HP=50, VIT=10, Eva=20}), ['B']=expand_stats({PetMP=80, AutoCurePot=4, AutoFC=3}), ['C']=expand_stats({Acc=15, Racc=25, Enmity=-6}), ['D']=expand_stats({Acc=15, SubtleBlow=7}) } -- Naga Kyahan
+
+-- ==============================================================================
+-- PSYCLOTH SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26796] = { ['A']=expand_stats({Macc=10, SIRD=-15, MND=7}), ['B']=expand_stats({PetAtk=25, PetMAB=15, PetEnmity=7}), ['C']=expand_stats({Macc=20, FastCast=10, INT=7}), ['D']=expand_stats({ElemSkill=20, INT=7, Enmity=-6}) } -- Psycloth Tiara
+escha_tables[15][26952] = { ['A']=expand_stats({Macc=10, SIRD=-15, MND=7}), ['B']=expand_stats({PetAtk=25, PetMAB=15, PetEnmity=7}), ['C']=expand_stats({Macc=20, FastCast=10, INT=7}), ['D']=expand_stats({MP=80, BloodBoon=4, PetMAB=25}) } -- Psycloth Vest
+escha_tables[15][27102] = { ['A']=expand_stats({Macc=10, SIRD=-15, MND=7}), ['B']=expand_stats({PetAtk=25, PetMAB=15, PetEnmity=7}), ['C']=expand_stats({Macc=20, FastCast=10, INT=7}), ['D']=expand_stats({MP=80, Macc=15, FastCast=7}) } -- Psycloth Manillas
+escha_tables[15][27287] = { ['A']=expand_stats({Macc=10, SIRD=-15, MND=7}), ['B']=expand_stats({PetAtk=25, PetMAB=15, PetEnmity=7}), ['C']=expand_stats({Macc=20, FastCast=10, INT=7}), ['D']=expand_stats({PetMacc=20, PetMAB=20, PetEnmity=7}) } -- Psycloth Lappas
+escha_tables[15][27462] = { ['A']=expand_stats({Macc=10, SIRD=-15, MND=7}), ['B']=expand_stats({PetAtk=25, PetMAB=15, PetEnmity=7}), ['C']=expand_stats({Macc=20, FastCast=10, INT=7}), ['D']=expand_stats({MP=50, INT=7, ConserveMP=6}) } -- Psycloth Boots
+
+-- ==============================================================================
+-- PURSUER'S SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26795] = { ['A']=expand_stats({DEX=7, AGI=10, Recycle=15}), ['B']=expand_stats({HP=50, Acc=20, Atk=15}), ['C']=expand_stats({Ratk=15, Enmity=-6, SubtleBlow=7}), ['D']=expand_stats({HP=50, Crit=4, Snapshot=6}) } -- Pursuer's Beret
+escha_tables[15][26951] = { ['A']=expand_stats({DEX=7, AGI=10, Recycle=15}), ['B']=expand_stats({HP=50, Acc=20, Atk=15}), ['C']=expand_stats({Ratk=15, Enmity=-6, SubtleBlow=7}), ['D']=expand_stats({Ratk=15, STR=7, PDT=-4}) } -- Pursuer's Doublet
+escha_tables[15][27101] = { ['A']=expand_stats({DEX=7, AGI=10, Recycle=15}), ['B']=expand_stats({HP=50, Acc=20, Atk=15}), ['C']=expand_stats({Ratk=15, Enmity=-6, SubtleBlow=7}), ['D']=expand_stats({DEX=7, AGI=10, STR=7}) } -- Pursuer's Cuffs
+escha_tables[15][27286] = { ['A']=expand_stats({DEX=7, AGI=10, Recycle=15}), ['B']=expand_stats({HP=50, Acc=20, Atk=15}), ['C']=expand_stats({Ratk=15, Enmity=-6, SubtleBlow=7}), ['D']=expand_stats({Racc=10, RapidShot=10, Recycle=15}) } -- Pursuer's Pants
+escha_tables[15][27461] = { ['A']=expand_stats({DEX=7, AGI=10, Recycle=15}), ['B']=expand_stats({HP=50, Acc=20, Atk=15}), ['C']=expand_stats({Ratk=15, Enmity=-6, SubtleBlow=7}), ['D']=expand_stats({AGI=10, RapidShot=10, SubtleBlow=7}) } -- Pursuer's Gaiters
+
+-- ==============================================================================
+-- VANYA SET (Rank 15)
+-- ==============================================================================
+escha_tables[15][26797] = { ['A']=expand_stats({HealSkill=20, CureCast=-7, MDT=-3}), ['B']=expand_stats({MND=10, SIRD=-15, ConserveMP=6}), ['C']=expand_stats({MP=50, FastCast=10, Haste=2}), ['D']=expand_stats({HP=50, MP=50, Refresh=2}) } -- Vanya Hood
+escha_tables[15][26953] = { ['A']=expand_stats({HealSkill=20, CureCast=-7, MDT=-3}), ['B']=expand_stats({MND=10, SIRD=-15, ConserveMP=6}), ['C']=expand_stats({MP=50, FastCast=10, Haste=2}), ['D']=expand_stats({CHR=10, StringSkill=10, Macc=20}) } -- Vanya Robe
+escha_tables[15][27103] = { ['A']=expand_stats({HealSkill=20, CureCast=-7, MDT=-3}), ['B']=expand_stats({MND=10, SIRD=-15, ConserveMP=6}), ['C']=expand_stats({MP=50, FastCast=10, Haste=2}), ['D']=expand_stats({HP=50, Meva=15, PDT=-3}) } -- Vanya Cuffs
+escha_tables[15][27288] = { ['A']=expand_stats({HealSkill=20, CureCast=-7, MDT=-3}), ['B']=expand_stats({MND=10, SIRD=-15, ConserveMP=6}), ['C']=expand_stats({MP=50, FastCast=10, Haste=2}), ['D']=expand_stats({CurePot=5, CureCast=-15, ConserveMP=6}) } -- Vanya Slops
+escha_tables[15][27463] = { ['A']=expand_stats({HealSkill=20, CureCast=-7, MDT=-3}), ['B']=expand_stats({MND=10, SIRD=-15, ConserveMP=6}), ['C']=expand_stats({MP=50, FastCast=10, Haste=2}), ['D']=expand_stats({MP=50, CurePot=7, Enmity=-6}) } -- Vanya Clogs
 
 return escha_tables

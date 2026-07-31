@@ -46,6 +46,9 @@ local function expand_stats(rank_data)
     if rank_data.EnhMagSkill then full_stats['Enhancing Magic Skill'] = rank_data.EnhMagSkill end
     if rank_data.ResistBind then full_stats['Resist Bind'] = rank_data.ResistBind end
     if rank_data.ResistSilence then full_stats['Resist Silence'] = rank_data.ResistSilence end
+    if rank_data.ResistSleep then full_stats['Resist Sleep'] = rank_data.ResistSleep end
+    if rank_data.ResistCharm then full_stats['Resist Charm'] = rank_data.ResistCharm end
+    if rank_data.OccResistAilments then full_stats['All status ailment resistance'] = rank_data.OccResistAilments end
 
     -- Base Stats
     if rank_data.STR then full_stats['STR'] = rank_data.STR end
@@ -227,6 +230,9 @@ local tatena_sune = {
         {Acc=44, BaseStats=6, TA=1}, {Acc=48, BaseStats=7, TA=1}, {Acc=52, BaseStats=8, TA=2}, {Acc=56, BaseStats=9, TA=2}, {Acc=60, BaseStats=10, TA=3}
     }
 }
+local macabre_gaunt = {
+    ['A'] = { {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {Meva=75, OccResistAilments=10, BaseStats=10} }
+}
 local acuity_belt = {
     ['A'] = {
         {Macc=1}, {Macc=2}, {Macc=3}, {Macc=4}, {Macc=5},
@@ -236,6 +242,13 @@ local acuity_belt = {
 }
 local apeile_ring = {
     ['A'] = { {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {DEF=20, MDB=5} }
+}
+local arete_del_luna = {
+    ['A'] = {
+        {ResistSleep=1}, {ResistSleep=2}, {ResistSleep=3}, {ResistSleep=4}, {ResistSleep=5},
+        {ResistSleep=6, ResistCharm=1}, {ResistSleep=7, ResistCharm=2}, {ResistSleep=8, ResistCharm=3}, {ResistSleep=9, ResistCharm=4}, {ResistSleep=10, ResistCharm=5},
+        {ResistSleep=11, ResistCharm=7}, {ResistSleep=12, ResistCharm=9}, {ResistSleep=13, ResistCharm=11}, {ResistSleep=14, ResistCharm=13}, {ResistSleep=15, ResistCharm=15}
+    }
 }
 local aurists_cape = {
     ['A'] = {
@@ -399,9 +412,11 @@ for r = 1, 15 do
     unity_tables[r][28276] = { ['A'] = expand_stats(jute_boots['A'][r]) } -- Jute Boots +1
     unity_tables[r][28274] = { ['A'] = expand_stats(regal_pumps['A'][r]) } -- Regal Pumps +1
     unity_tables[r][25924] = { ['A'] = expand_stats(tatena_sune['A'][r]) } -- Tatena. Sune. +1
+    unity_tables[r][27994] = { ['A'] = expand_stats(macabre_gaunt['A'][r]) } -- Macabre Gaunt. +1
     
     unity_tables[r][28430] = { ['A'] = expand_stats(acuity_belt['A'][r]) } -- Acuity Belt +1
     unity_tables[r][27561] = { ['A'] = expand_stats(apeile_ring['A'][r]) } -- Apeile Ring +1
+    unity_tables[r][28487] = { ['A'] = expand_stats(arete_del_luna['A'][r]) } -- Arete del Luna +1
     unity_tables[r][27620] = { ['A'] = expand_stats(aurists_cape['A'][r]) } -- Aurist's Cape +1
     unity_tables[r][27518] = { ['A'] = expand_stats(bathy_choker['A'][r]) } -- Bathy Choker +1
     unity_tables[r][10771] = { ['A'] = expand_stats(cacoethic_ring['A'][r]) } -- Cacoethic Ring +1

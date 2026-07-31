@@ -19,6 +19,12 @@ local function expand_stats(rank_data)
     if rank_data.CHR then full_stats['CHR'] = rank_data.CHR end
 
     -- Core Combat & Magic Stats
+    if rank_data.Damage then full_stats['Damage'] = rank_data.Damage end
+    if rank_data.Acc then full_stats['Accuracy'] = rank_data.Acc end
+    if rank_data.Atk then full_stats['Attack'] = rank_data.Atk end
+    if rank_data.Racc then full_stats['Ranged Accuracy'] = rank_data.Racc end
+    if rank_data.Macc then full_stats['Magic Accuracy'] = rank_data.Macc end
+    if rank_data.Meva then full_stats['Magic Evasion'] = rank_data.Meva end
     if rank_data.DA then full_stats['Double Attack'] = rank_data.DA end
     if rank_data.TA then full_stats['Triple Attack'] = rank_data.TA end
     if rank_data.PDL then full_stats['Physical Damage Limit'] = rank_data.PDL end
@@ -37,9 +43,15 @@ local function expand_stats(rank_data)
     if rank_data.MDMG then full_stats['Magic Damage'] = rank_data.MDMG end
     if rank_data.MAB then full_stats['Magic Attack Bonus'] = rank_data.MAB end
     if rank_data.HelixDur then full_stats['Helix Effect Duration'] = rank_data.HelixDur end
+    if rank_data.Snapshot then full_stats['Snapshot'] = rank_data.Snapshot end
+    if rank_data.WSDmg then full_stats['Weapon Skill Damage'] = rank_data.WSDmg end
     
     -- Companion & Unique Stats
     if rank_data.PetDA then full_stats['Pet: Double Attack'] = rank_data.PetDA end
+    if rank_data.PetAcc then full_stats['Pet: Accuracy'] = rank_data.PetAcc end
+    if rank_data.PetAtk then full_stats['Pet: Attack'] = rank_data.PetAtk end
+    if rank_data.PetRacc then full_stats['Pet: Ranged Accuracy'] = rank_data.PetRacc end
+    if rank_data.PetHaste then full_stats['Pet: Haste'] = rank_data.PetHaste end
     if rank_data.WyvDT then full_stats['Wyvern: Damage Taken'] = rank_data.WyvDT end
     if rank_data.AvaBaseStats then full_stats['Avatar: All Attr.'] = rank_data.AvaBaseStats end
     if rank_data.BPDmg then full_stats['Blood Pact Damage'] = rank_data.BPDmg end
@@ -178,5 +190,31 @@ gen_ranks(25539, 25, {MP=50, LuopanDur=25, LuopanDT=-10})
 gen_ranks(25543, 15, {HP=30, STR=10, MND=10, DT=-5})
 gen_ranks(25544, 20, {HP=45, STR=12, MND=12, DT=-6})
 gen_ranks(25545, 25, {HP=60, STR=15, MND=15, DT=-7})
+
+-- ==============================================================================
+-- JSE Oboro Weapons (Rank 15 Only)
+-- ==============================================================================
+jse_tables[15][20860] = { ['A'] = expand_stats({Acc=70, DA=6, Crit=5}) } -- Minos
+jse_tables[15][20534] = { ['A'] = expand_stats({Acc=70, STR=10, STP=5}) } -- Nyepel
+jse_tables[15][21110] = { ['A'] = expand_stats({Acc=50, Atk=30, DA=5}) } -- Sindri
+jse_tables[15][21173] = { ['A'] = expand_stats({Macc=50, MDMG=30, FC=6}) } -- Kaladanda
+jse_tables[15][20720] = { ['A'] = expand_stats({Acc=50, Macc=30, FC=8}) } -- Egeking
+jse_tables[15][20618] = { ['A'] = expand_stats({Acc=50, Crit=5, TA=3}) } -- Sandung
+jse_tables[15][28648] = { ['A'] = expand_stats({HP=50, Meva=50, DT=-3}) } -- Priwen
+jse_tables[15][20904] = { ['A'] = expand_stats({Damage=10, Acc=70, WSDmg=10}) } -- Cronus
+jse_tables[15][20811] = { ['A'] = expand_stats({Acc=50, PetAcc=50, PetAtk=30}) } -- Arktoi
+jse_tables[15][21407] = { ['A'] = expand_stats({HP=30, Macc=10, DT=-3}) } -- Terpander
+jse_tables[15][21277] = { ['A'] = expand_stats({Racc=50, STP=8, Snapshot=5}) } -- Lionsquall
+jse_tables[15][21039] = { ['A'] = expand_stats({Acc=70, WSDmg=5, DA=5}) } -- Kurikaranotachi
+jse_tables[15][20994] = { ['A'] = expand_stats({Acc=50, Racc=50, DT=-5}) } -- Shigi
+jse_tables[15][20948] = { ['A'] = expand_stats({Damage=8, Acc=70, STP=8}) } -- Areadbhar
+jse_tables[15][21174] = { ['A'] = expand_stats({PetAcc=70, PetAtk=70, PetDA=15}) } -- Gridarvor
+jse_tables[15][20721] = { ['A'] = expand_stats({Acc=50, Macc=50, MDMG=80}) } -- Mimesis
+jse_tables[15][21278] = { ['A'] = expand_stats({AGI=10, MDMG=30, MAB=10}) } -- Deathlocke
+jse_tables[15][20535] = { ['A'] = expand_stats({Acc=70, PetAcc=70, PetHaste=10, PetRacc=70}) } -- Ohtas
+jse_tables[15][20619] = { ['A'] = expand_stats({Acc=50, STP=8, WSDmg=5}) } -- Polyhymnia
+jse_tables[15][21175] = { ['A'] = expand_stats({Macc=50, MAB=10, FC=5}) } -- Coeus
+jse_tables[15][21372] = { ['A'] = expand_stats({MP=20, Macc=10, FC=3}) } -- Dunna
+jse_tables[15][20761] = { ['A'] = expand_stats({Acc=70, Meva=50, WSDmg=10}) } -- Aettir
 
 return jse_tables
