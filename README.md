@@ -3,7 +3,7 @@
 **🚨 IMPORTANT: NOT THE LEGACY GEARINFO 🚨**  
 *This is a completely rebuilt, standalone addon. It is designed to safely replace or run alongside the old, legacy "GearInfo" without breaking your existing GearSwap Luas. Legacy GearSwap files that heavily hardcoded the old addon will not crash or conflict, because this version uses a completely isolated folder (`GearInfo-Mod`) and command structure (`//gim`).*
 
-**Status:** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha(Part1), REMA, and statless gear are fully integrated.
+**Status:** - Odyssey, Unity, JSE torques, Divergence, Limbus, Escha, REMA, and statless gear are fully integrated.
 
 This version of GearInfo-Mod is a lightweight Windower addon designed to track and display your equipment statistics in real-time. Unlike the older version which dealt with hardcoded stuffs, I'm using dynamic pattern matching (Regex) to read base stats and custom augments directly from your equipped items(when applicable), ensuring your data is always accurate regardless of recent game updates or random gear rolls. I did have to create custom files and retrieve augments from BG-wiki that the community identified. All of that was manual entry death. Same for grabbing the ID of the equipment.  Death I say!
 
@@ -61,8 +61,8 @@ Type the following into your FFXI chat log:
 6. ~~Pet Augments is buggy~~ DONE on 7/12/2026 but testing
 7. ~~Add REMA Augments~~ DONE on 7/24/2026
 8. ~~Add Part 1 of Escha~~ DONE on 7/27/2026
-9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~ DONE
-10. Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)
+9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~ DONE 7/28/2026
+10. ~~Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)~~ DONE 7/30/2026
 
 ## Usage
 1. Create a folder in addons called `GearInfo-Mod`
@@ -78,8 +78,7 @@ Type the following into your FFXI chat log:
 GearInfo-Mod calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently 
 polling the game's `/checkparam` function whenever equipment is changed, ensuring you have an accurate view of your total combat performance. 
 To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second 
-delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. Path-based items rely on an extensive, 
-dynamically generated `exceptions.lua` table to look up accurate fractional values for intermediate ranks.
+delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. 
 
 ## Special Thanks
 Thanks Zedoma and Navius for testing and giving me feedback for gear. The ghost idea came from Navius and I ran with it.
