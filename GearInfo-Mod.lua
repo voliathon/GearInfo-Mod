@@ -2,7 +2,7 @@
 -- I redid the entire addon so @Copyright Voliathon 2026
 _addon.name = 'GearInfo-Mod'
 _addon.author = 'Voliathon'
-_addon.version = '1.5.0'
+_addon.version = '1.6.0'
 _addon.commands = {'gim'}
 
 local extdata = require('extdata')
@@ -71,15 +71,21 @@ local stat_sequence = {
     { stat = 'Ailment Resistance Magic effect', patterns = {'ailment resistance magic effect%s*%+?(%d+)'} },
 	{ stat = 'All Jumps damage', patterns = {'all jumps damage%s*%+?(%d+)%%?'} },
 	{ stat = 'All resistances', patterns = {'all resistances%s*%+?(%d+)', 'res%. all ele%.%s*%+?(%d+)'} },
+	{ stat = 'All songs', patterns = {'all songs%s*%+?(%d+)'} },
 	{ stat = 'All status ailment resistance', patterns = {'all status ailment resistance%s*%+?(%d+)', 'resistance to all status ailments%s*%+?(%d+)', '["\']?occ%. inc%. resist%. to stat%. ailments["\']?%s*%+?(%d+)'} },
     { stat = 'Aquaveil Interruption(s)', patterns = {'aquaveil%s*interruption%(s%)%s*%+?(%d+)', 'aquaveil%s*%+?(%d+)%s*interruption'} },
 	{ stat = 'Attack', patterns = {'["\']?attack["\']?%s*%+?(%d+)', '["\']?atk%.["\']?%s*%+?(%d+)'} },
     { stat = 'Automaton: Accuracy', patterns = {'automaton:%s*accuracy%s*%+?(%d+)', 'automaton:%s*acc%.%s*%+?(%d+)'} },
+	{ stat = 'Automaton: Cure Potency', patterns = {'automaton:%s*["\']?cure["\']? potency%s*%+?(%d+)%%?'} },
+    { stat = 'Automaton: Fast Cast', patterns = {'automaton:%s*["\']?fast cast["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Automaton: HP', patterns = {'automaton:%s*hp%s*%+?(%d+)'} },
     { stat = 'Automaton: Mag. Acc.', patterns = {'automaton:%s*mag%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*magic accuracy%s*%+?(%d+)'} },
     { stat = 'Automaton: Magic Attack Bonus', patterns = {'automaton:%s*["\']?mag%. atk%. bns%.["\']?%s*%+?(%d+)', 'automaton:%s*["\']?magic attack bonus["\']?%s*%+?(%d+)'} },
+    { stat = 'Automaton Magic Skill', patterns = {'automaton magic skill%s*%+?(%d+)'} },
+    { stat = 'Automaton Melee Skill', patterns = {'automaton melee skill%s*%+?(%d+)'} },
     { stat = 'Automaton: R. Acc.', patterns = {'automaton:%s*r%.%s*acc%.%s*%+?(%d+)', 'automaton:%s*rng%.%s*acc%.%s*%+?(%d+)'} },
-    { stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} },
+    { stat = 'Automaton Ranged Skill', patterns = {'automaton ranged skill%s*%+?(%d+)'} },
+	{ stat = 'Automaton: Special attack damage', patterns = {'automaton:%s*special attack damage%s*%+?(%d+)%%?'} },
     { stat = 'Avatar Perpetuation Cost', patterns = {'avatar perpetuation cost%s*([%+%-]?%d+)'} },
     { stat = 'Avatar: Accuracy', patterns = {'avatar:%s*accuracy%s*%+?(%d+)', 'avatar:%s*acc%.%s*%+?(%d+)'} },
     { stat = 'Avatar: All Attr.', patterns = {'avatar:%s*all attr%.%s*%+?(%d+)'} },
@@ -87,8 +93,11 @@ local stat_sequence = {
     { stat = 'Avatar: Mag. Acc.', patterns = {'avatar:%s*mag%.%s*acc%.%s*%+?(%d+)', 'avatar:%s*magic accuracy%s*%+?(%d+)'} },
     { stat = 'Avatar: Magic Burst Bonus', patterns = {'avatar:%s*magic burst bonus%s*%+?(%d+)%%?'} },
     { stat = 'Avatar: TP Bonus', patterns = {'avatar:%s*tp bonus%s*%+?(%d+)'} },
+	{ stat = 'Blood Boon', patterns = {'["\']?blood boon["\']?%s*%+?(%d+)'} },
+    { stat = 'Blood Pact ability delay', patterns = {'["\']?blood pact["\']? ability delay%s*%-?(%d+)'} },
     { stat = 'Blood Pact Damage', patterns = {'["\']?blood pact["\']? damage%s*%+?(%d+)', '["\']?blood pact dmg%.["\']?%s*%+?(%d+)'} },
     { stat = 'Blue Magic Spellcasting Time', patterns = {'["\']?blue magic spellcasting time["\']?%s*%-?(%d+)%%?'} },
+	{ stat = 'Blue Magic Skill', patterns = {'["\']?blue magic skill["\']?%s*%+?(%d+)'} },
     { stat = 'Burst Affinity recast time', patterns = {'["\']?burst affinity["\']? recast time%s*%-?(%d+)%%?'} },
     { stat = 'Chain Affinity recast time', patterns = {'["\']?chain affinity["\']? recast time%s*%-?(%d+)%%?'} },
     { stat = 'Chakra', patterns = {'["\']?chakra["\']?%s*%+?(%d+)'} },
@@ -102,6 +111,7 @@ local stat_sequence = {
     { stat = 'Counter Damage', patterns = {'["\']?counter["\']? damage%s*%+?(%d+)%%?'} },    
     { stat = 'Critical hit damage', patterns = {'critical hit damage%s*%+?(%d+)%%?'} },
     { stat = 'Critical Hit Rate', patterns = {'["\']?critical hit rate["\']?%s*%+?(%d+)%%?', '["\']?crit%.%s*hit rate["\']?%s*%+?(%d+)%%?'} },
+	{ stat = 'Cure effect received', patterns = {'["\']?cure["\']? effect received%s*%+?(%d+)%%?'} },
     { stat = 'Cure Potency', patterns = {'["\']?cure["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Cure Potency II', patterns = {'["\']?cure["\']? potency ii%s*%+?(%d+)%%?'} },
     { stat = 'Cure Spellcasting Time', patterns = {'["\']?cure["\']? spellcasting time%s*%-?(%d+)%%?'} },
@@ -109,6 +119,7 @@ local stat_sequence = {
 	{ stat = 'Cursna received', patterns = {'potency of %p?cursna%p? effects? received%s*%+?(%d+)', '%p?cursna%p? effects? received%s*%+?(%d+)', '%p?cursna%p? received%s*%+?(%d+)'} },
     { stat = 'Dagan potency', patterns = {'["\']?dagan["\']? potency%s*%+?(%d+)%%?'} },    
     { stat = 'Daken', patterns = {'["\']?daken["\']?%s*%+?(%d+)'} },
+	{ stat = 'Dark Magic Skill', patterns = {'["\']?dark magic skill["\']?%s*%+?(%d+)'} },
     { stat = 'Damage', patterns = {'["\']?damage["\']?%s*:%s*%+?(%d+)', 'dmg%.?%s*:%s*%+?(%d+)'} },
     { stat = 'Damage Taken', patterns = {'["\']?damage taken["\']?%s*([%+%-]?%d+)%%?', '["\']?dt["\']?%s*([%+%-]?%d+)%%?'} },
     { stat = 'Defense', patterns = {'["\']?defense["\']?%s*%+?(%d+)', '["\']?def%.["\']?%s*%+?(%d+)', '["\']?def["\']?%s*:%s*(%d+)', '["\']?def["\']?%s*%+?(%d+)'} },
@@ -122,7 +133,8 @@ local stat_sequence = {
     { stat = 'Drain potency', patterns = {'["\']?drain["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Dual Wield', patterns = {'["\']?dual wield["\']?%s*%+?(%d+)'} },
     { stat = 'Elemental Magic Recast Delay', patterns = {'["\']?elemental magic recast delay["\']?%s*%-?(%d+)%%?'} },
-    { stat = 'Elemental weapon skill damage', patterns = {'elemental weapon skill damage%s*%+?(%d+)%%?'} },
+    { stat = 'Elemental Magic Skill', patterns = {'["\']?elemental magic skill["\']?%s*%+?(%d+)'} },
+	{ stat = 'Elemental weapon skill damage', patterns = {'elemental weapon skill damage%s*%+?(%d+)%%?'} },
     { stat = 'Enemy Critical Hit Rate', patterns = {'["\']?enemy critical hit rate["\']?%s*([%+%-]?%d+)%%?'} },
     { stat = 'Enfeebling Magic Duration', patterns = {'["\']?enfeebling magic effect duration["\']?%s*%+?(%d+)%%?', '["\']?enf%. mag%. eff%. dur%.["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Enfeebling Magic Effect', patterns = {'["\']?enfeebling magic effect["\']?%s*%+?(%d+)'} },
@@ -172,10 +184,16 @@ local stat_sequence = {
     { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage taken%s*([%+%-]?%d+)%%?'} },
     { stat = 'Pet: DMG', patterns = {'pet:%s*dmg:%s*%+?(%d+)%%?', 'pet:%s*damage:%s*%+?(%d+)%%?'} },
     { stat = 'Pet: Double Attack', patterns = {'pet:%s*["\']?double attack["\']?%s*%+?(%d+)%%?'} },
+	{ stat = 'Pet: Enmity', patterns = {'pet:%s*enmity%s*([%+%-]?%d+)'} },
     { stat = 'Pet: Evasion', patterns = {'pet:%s*evasion%s*%+?(%d+)', 'pet:%s*eva%.%s*%+?(%d+)'} },
+	{ stat = 'Pet: Haste', patterns = {'pet:%s*haste%s*%+?(%d+)%%?'} },
+    { stat = 'Pet: INT', patterns = {'pet:%s*int%s*%+?(%d+)'} },
     { stat = 'Pet: Mag. Acc.', patterns = {'pet:%s*mag%.%s*acc%.%s*%+?(%d+)', 'pet:%s*magic accuracy%s*%+?(%d+)'} },
     { stat = 'Pet: Magic Evasion', patterns = {'pet:%s*magic evasion%s*%+?(%d+)', 'pet:%s*mag%.%s*eva%.%s*%+?(%d+)'} },
+    { stat = 'Pet: MP', patterns = {'pet:%s*mp%s*%+?(%d+)'} },
     { stat = 'Pet: Ranged Accuracy', patterns = {'pet:%s*rng%.%s*acc%.?%s*%+?(%d+)', 'pet:%s*ranged accuracy%s*%+?(%d+)'} },
+    { stat = 'Pet: Regen', patterns = {'pet:%s*regen%s*%+?(%d+)'} },
+    { stat = 'Pet: VIT', patterns = {'pet:%s*vit%s*%+?(%d+)'} },
     { stat = 'Phalanx', patterns = {'["\']?phalanx["\']?%s*received%s*%+?(%d+)', '["\']?phalanx["\']?%s*%+?(%d+)'} },
     { stat = 'Phantom Roll', patterns = {'["\']?phantom roll["\']?%s*%+?(%d+)'} },
     { stat = 'Phantom Roll duration', patterns = {'["\']?phantom roll["\']? effect duration%s*%+?(%d+)'} },
@@ -196,7 +214,9 @@ local stat_sequence = {
     { stat = 'Regen effects received', patterns = {'potency of ["\']?regen["\']? effects received%s*%+?(%d+)'} },
     { stat = 'Regen Potency', patterns = {'["\']?regen["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Resist Bind', patterns = {'["\']?resist bind["\']?%s*%+?(%d+)'} },
+	{ stat = 'Resist Charm', patterns = {'["\']?resist charm["\']?%s*%+?(%d+)'} },
     { stat = 'Resist Silence', patterns = {'["\']?resist silence["\']?%s*%+?(%d+)'} },
+	{ stat = 'Resist Sleep', patterns = {'["\']?resist sleep["\']?%s*%+?(%d+)'} },
     { stat = 'Sekkanoki recast time', patterns = {'["\']?sekkanoki["\']? recast time%s*%-?(%d+)%%?'} },
     { stat = 'Sekkanoki: Weapon Skill Damage', patterns = {'["\']?sekkanoki["\']?: weapon skill damage%s*%+?(%d+)%%?'} },
 	{ stat = 'Skillchain Bonus', patterns = {'["\']?skillchain bonus["\']?%s*%+?(%d+)'} },
@@ -211,6 +231,7 @@ local stat_sequence = {
 	{ stat = 'Stoneskin casting time', patterns = {'["\']?stoneskin["\']? casting time%s*([%+%-]?%d+)%%?'} },
     { stat = 'Store TP', patterns = {'["\']?store tp["\']?%s*%+?(%d+)'} },
     { stat = 'STR', patterns = {'["\']?str["\']?%s*%+?(%d+)'} },
+	{ stat = 'String Instrument Skill', patterns = {'["\']?string instrument skill["\']?%s*%+?(%d+)'} },
     { stat = 'Subtle Blow', patterns = {'["\']?subtle blow["\']?%s*%+?(%d+)'} },
     { stat = 'Subtle Blow II', patterns = {'["\']?subtle blow ii["\']?%s*%+?(%d+)'} },
     { stat = 'Sword Enhancement Spell Damage', patterns = {'["\']?sword enhancement spell damage["\']?%s*%+?(%d+)%%?'} },
@@ -228,7 +249,8 @@ local stat_sequence = {
     { stat = 'Waltz Potency', patterns = {'["\']?waltz["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Weapon Skill Accuracy', patterns = {'["\']?weapon skill accuracy["\']?%s*%+?(%d+)'} },
     { stat = 'Weapon Skill Damage', patterns = {'["\']?weapon skill damage["\']?%s*%+?(%d+)%%?'} },
-    { stat = 'Wyvern: Damage Taken', patterns = {'wyvern:%s*damage taken%s*([%+%-]?%d+)%%?'} },
+    { stat = 'Wind Instrument Skill', patterns = {'["\']?wind instrument skill["\']?%s*%+?(%d+)'} },
+	{ stat = 'Wyvern: Damage Taken', patterns = {'wyvern:%s*damage taken%s*([%+%-]?%d+)%%?'} },
     { stat = 'Wyvern: HP', patterns = {'wyvern:%s*hp%s*%+?(%d+)'} },
     { stat = 'Wyvern: Lv.', patterns = {'wyvern:%s*lv%.%s*%+?(%d+)'} }
 }
@@ -961,7 +983,7 @@ windower.register_event('addon command', function(command, ...)
             update_ui()
             windower.add_to_chat(207, 'GearInfo: Ghost Gear ' .. (show_ghost and 'Enabled' or 'Disabled'))
         else
-            windower.add_to_chat(207, 'GearInfo: Ghost Usage: //gi ghost [save|clear|toggle]')
+            windower.add_to_chat(207, 'GearInfo: Ghost Usage: //gim ghost [save|clear|toggle]')
         end
     elseif command == 'style' then
         local arg = select(1, ...)
@@ -971,10 +993,10 @@ windower.register_event('addon command', function(command, ...)
             update_ui()
             windower.add_to_chat(207, 'GearInfo: Layout changed to ' .. arg)
         else
-            windower.add_to_chat(207, 'GearInfo: Usage: //gi style [horizontal|vertical]')
+            windower.add_to_chat(207, 'GearInfo: Usage: //gim style [horizontal|vertical]')
         end
     elseif command == 'help' then
-        windower.add_to_chat(207, ' --- GearInfo-Mod v1.5.0 Help ---')
+        windower.add_to_chat(207, ' --- GearInfo-Mod v1.6.0 Help ---')
         windower.add_to_chat(207, ' //gim refresh          : Manually refreshes UI and pulls new character stats.')
         windower.add_to_chat(207, ' //gim base             : Toggles the Base Stats (STR/DEX/etc.) UI window.')
         windower.add_to_chat(207, ' //gim ghost save       : Saves a snapshot of your current stats to compare against.')
@@ -990,7 +1012,7 @@ windower.register_event('addon command', function(command, ...)
     elseif command == 'validate' then
         validate_stat_keys()
 	else
-        windower.add_to_chat(207, 'GearInfo: Unknown command. Type //gi help for a list of commands.')
+        windower.add_to_chat(207, 'GearInfo: Unknown command. Type //gim for a list of commands.')
     end
 end)
 
