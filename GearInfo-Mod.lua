@@ -2,7 +2,7 @@
 -- I redid the entire addon so @Copyright Voliathon 2026
 _addon.name = 'GearInfo-Mod'
 _addon.author = 'Voliathon'
-_addon.version = '1.6.0'
+_addon.version = '1.6.1'
 _addon.commands = {'gim'}
 
 local extdata = require('extdata')
@@ -121,11 +121,11 @@ local stat_sequence = {
     { stat = 'Daken', patterns = {'["\']?daken["\']?%s*%+?(%d+)'} },
 	{ stat = 'Dark Magic Skill', patterns = {'["\']?dark magic skill["\']?%s*%+?(%d+)'} },
     { stat = 'Damage', patterns = {'["\']?damage["\']?%s*:%s*%+?(%d+)', 'dmg%.?%s*:%s*%+?(%d+)'} },
-    { stat = 'Damage Taken', patterns = {'["\']?damage taken["\']?%s*([%+%-]?%d+)%%?', '["\']?dt["\']?%s*([%+%-]?%d+)%%?'} },
+    { stat = 'Damage Taken', patterns = {'damage%s+taken[^%d%+%-]*([%+%-]?%s*%d+)%%?', 'dt[^%d%+%-]*([%+%-]?%s*%d+)%%?'} },
     { stat = 'Defense', patterns = {'["\']?defense["\']?%s*%+?(%d+)', '["\']?def%.["\']?%s*%+?(%d+)', '["\']?def["\']?%s*:%s*(%d+)', '["\']?def["\']?%s*%+?(%d+)'} },
     { stat = 'DEX', patterns = {'["\']?dex["\']?%s*%+?(%d+)'} },
     { stat = 'Dispel', patterns = {'["\']?dispel["\']?%s*%+?(%d+)'} },
-    { stat = 'Double Attack', patterns = {'["\']?double attack["\']?%s*%+?(%d+)%%?', '["\']?dbl%.%s*atk%.["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Double Attack', patterns = {'double%s+attack[^%d%+%-]*[%+%-]?%s*(%d+)%%?', 'dbl%.%s*atk%.[^%d%+%-]*[%+%-]?%s*(%d+)%%?'} },
     { stat = 'Double Attack Damage', patterns = {'["\']?double attack["\']? damage%s*%+?(%d+)%%?'} },    
     { stat = 'Double Shot', patterns = {'["\']?double shot["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Double Shot Damage', patterns = {'["\']?double shot["\']? damage%s*%+?(%d+)', '["\']?double shot dmg%.["\']?%s*%+?(%d+)'} },
@@ -159,14 +159,14 @@ local stat_sequence = {
     { stat = 'Luopan Duration', patterns = {'["\']?luopan duration["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Luopan: Damage Taken', patterns = {'luopan:%s*absorbs damage%s*%+?(%d+)%%?', 'luopan:%s*damage taken%s*([%+%-]?%d+)%%?'} },
     { stat = 'Magic Accuracy', patterns = {'["\']?mag%.%s*acc%.?["\']?%s*%+?(%d+)', '["\']?magic accuracy["\']?%s*%+?(%d+)', '["\']?m%.acc%.["\']?%s*%+?(%d+)'} },
-    { stat = 'Magic Attack Bonus', patterns = {'["\']?mag%.%s*atk%.%s*bns%.["\']?%s*%+?(%d+)', '["\']?magic attack bonus["\']?%s*%+?(%d+)', '["\']?magic atk%. bonus["\']?%s*%+?(%d+)'} },
+    { stat = 'Magic Attack Bonus', patterns = {'mag%.%s*atk%.%s*bns%.[^%d%+%-]*[%+%-]?%s*(%d+)', 'magic%s+attack%s+bonus[^%d%+%-]*[%+%-]?%s*(%d+)', 'magic%s+atk%.%s+bonus[^%d%+%-]*[%+%-]?%s*(%d+)'} },
     { stat = 'Magic Burst Accuracy', patterns = {'["\']?magic burst accuracy["\']?%s*%+?(%d+)', '["\']?magic burst acc%.["\']?%s*%+?(%d+)'} },
-    { stat = 'Magic Burst Damage', patterns = {'["\']?magic burst damage["\']?%s*%+?(%d+)%%?', '["\']?magic burst dmg%.["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Magic Burst Damage', patterns = {'magic[^%w]+burst[^%w]+damage.-([%+%-]?%s*%d+)%%?', 'magic[^%w]+burst[^%w]+dmg%..-([%+%-]?%s*%d+)%%?'} },
     { stat = 'Magic Burst Damage II', patterns = {'["\']?magic burst damage ii["\']?%s*%+?(%d+)%%?', '["\']?magic burst dmg%. ii["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Magic Critical Hit Rate', patterns = {'["\']?magic critical hit rate["\']?%s*%+?(%d+)%%?', '["\']?mag%.%s*crit%.%s*hit rate["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Magic Damage', patterns = {'["\']?magic damage["\']?%s*%+?(%d+)', '["\']?mag%.%s*dmg%.["\']?%s*%+?(%d+)'} },
-    { stat = 'Magic Damage Taken', patterns = {'["\']?magic damage taken["\']?%s*([%+%-]?%d+)%%?', '["\']?magic dmg%. taken["\']?%s*([%+%-]?%d+)%%?', '["\']?mag%.%s*dmg%.%s*taken["\']?%s*([%+%-]?%d+)%%?', '["\']?mdt["\']?%s*([%+%-]?%d+)%%?'} },
-    { stat = 'Magic Def. Bonus', patterns = {'["\']?mag%.%s*def%.%s*bns%.["\']?%s*%+?(%d+)', '["\']?magic def%. bonus["\']?%s*%+?(%d+)', '["\']?mdb["\']?%s*%+?(%d+)'} },
+    { stat = 'Magic Damage Taken', patterns = {'magic%s+damage%s+taken[^%d%+%-]*([%+%-]?%s*%d+)%%?', 'magic%s+dmg%.%s*taken[^%d%+%-]*([%+%-]?%s*%d+)%%?', 'mag%.%s*dmg%.%s*taken[^%d%+%-]*([%+%-]?%s*%d+)%%?', 'mdt[^%d%+%-]*([%+%-]?%s*%d+)%%?'} },
+    { stat = 'Magic Def. Bonus', patterns = {'mag%.%s*def%.%s*bns%.[^%d]*([%+%-]?%s*%d+)', 'magic%s+def%.%s+bonus[^%d]*([%+%-]?%s*%d+)', 'm%.%s*def%.%s*b%.?[^%d]*([%+%-]?%s*%d+)', 'mdb[^%d]*([%+%-]?%s*%d+)'} },
     { stat = 'Magic Evasion', patterns = {'["\']?magic evasion["\']?%s*%+?(%d+)', '["\']?mag%.%s*evasion["\']?%s*%+?(%d+)', '["\']?mag%.%s*eva%.["\']?%s*%+?(%d+)', '["\']?meva["\']?%s*%+?(%d+)'} },
     { stat = 'Mana Wall', patterns = {'["\']?mana wall["\']?%s*%+?(%d+)%%?'} },
     { stat = 'MND', patterns = {'["\']?mnd["\']?%s*%+?(%d+)'} },
@@ -181,7 +181,7 @@ local stat_sequence = {
     { stat = 'Pet: All Attr.', patterns = {'pet:%s*all attr%.%s*%+?(%d+)'} },
     { stat = 'Pet: Attack', patterns = {'pet:%s*attack%s*%+?(%d+)', 'pet:%s*atk%.%s*%+?(%d+)'} },
     { stat = 'Pet: Chance of double damage', patterns = {'pet:%s*chance of double damage%s*%+?(%d+)%%?'} },
-    { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage taken%s*([%+%-]?%d+)%%?'} },
+    { stat = 'Pet: Damage Taken', patterns = {'pet:%s*damage%s+taken[^%d%+%-]*([%+%-]?%s*%d+)%%?'} },
     { stat = 'Pet: DMG', patterns = {'pet:%s*dmg:%s*%+?(%d+)%%?', 'pet:%s*damage:%s*%+?(%d+)%%?'} },
     { stat = 'Pet: Double Attack', patterns = {'pet:%s*["\']?double attack["\']?%s*%+?(%d+)%%?'} },
 	{ stat = 'Pet: Enmity', patterns = {'pet:%s*enmity%s*([%+%-]?%d+)'} },
@@ -199,8 +199,8 @@ local stat_sequence = {
     { stat = 'Phantom Roll duration', patterns = {'["\']?phantom roll["\']? effect duration%s*%+?(%d+)'} },
     { stat = 'Phantom Roll XI HP/MP', patterns = {'["\']?phantom roll xi["\']?: recover hp and mp%s*%+?(%d+)%%?'} },
     { stat = 'Physical Damage Limit', patterns = {'["\']?physical damage limit["\']?%s*%+?(%d+)%%?', '["\']?pdl["\']?%s*%+?(%d+)%%?'} },
-    { stat = 'Physical Damage Taken', patterns = {'["\']?physical damage taken["\']?%s*([%+%-]?%d+)%%?', '["\']?phys%.%s*dmg%.%s*taken["\']?%s*([%+%-]?%d+)%%?', '["\']?pdt["\']?%s*([%+%-]?%d+)%%?'} },
-    { stat = 'Quadruple Attack', patterns = {'["\']?quadruple attack["\']?%s*%+?(%d+)%%?', '["\']?quad%.%s*atk%.["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Physical Damage Taken', patterns = {'physical%s+damage%s+taken[^%d%+%-]*([%+%-]?%s*%d+)%%?', 'phys%.%s*dmg%.%s*taken[^%d%+%-]*([%+%-]?%s*%d+)%%?', 'pdt[^%d%+%-]*([%+%-]?%s*%d+)%%?'} },
+    { stat = 'Quadruple Attack', patterns = {'quadruple%s+attack[^%d%+%-]*[%+%-]?%s*(%d+)%%?', 'quad%.%s*atk%.[^%d%+%-]*[%+%-]?%s*(%d+)%%?'} },
     { stat = 'Quick Magic', patterns = {'["\']?quick magic["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Ranged Accuracy', patterns = {'["\']?rng%.%s*acc%.?["\']?%s*%+?(%d+)', '["\']?ranged accuracy["\']?%s*%+?(%d+)'} },
     { stat = 'Ranged Attack', patterns = {'["\']?rng%.%s*atk%.?["\']?%s*%+?(%d+)', '["\']?ranged attack["\']?%s*%+?(%d+)'} },
@@ -215,11 +215,14 @@ local stat_sequence = {
     { stat = 'Regen Potency', patterns = {'["\']?regen["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Resist Bind', patterns = {'["\']?resist bind["\']?%s*%+?(%d+)'} },
 	{ stat = 'Resist Charm', patterns = {'["\']?resist charm["\']?%s*%+?(%d+)'} },
+	{ stat = 'Resist Gravity', patterns = {'["\']?resist gravity["\']?%s*%+?(%d+)'} },
+    { stat = 'Resist Petrify', patterns = {'["\']?resist petrify["\']?%s*%+?(%d+)'} },
     { stat = 'Resist Silence', patterns = {'["\']?resist silence["\']?%s*%+?(%d+)'} },
 	{ stat = 'Resist Sleep', patterns = {'["\']?resist sleep["\']?%s*%+?(%d+)'} },
+	{ stat = 'Savage Blade Damage', patterns = {'savage%s+blade.-damage.-([%+%-]?%s*%d+)%%?'} },
     { stat = 'Sekkanoki recast time', patterns = {'["\']?sekkanoki["\']? recast time%s*%-?(%d+)%%?'} },
     { stat = 'Sekkanoki: Weapon Skill Damage', patterns = {'["\']?sekkanoki["\']?: weapon skill damage%s*%+?(%d+)%%?'} },
-	{ stat = 'Skillchain Bonus', patterns = {'["\']?skillchain bonus["\']?%s*%+?(%d+)'} },
+	{ stat = 'Skillchain Bonus', patterns = {'skillchain[^%w]+bonus.-([%+%-]?%s*%d+)'} },
     { stat = 'Skillchain Damage', patterns = {'["\']?skillchain dmg%.["\']?%s*%+?(%d+)%%?', '["\']?skillchain damage["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Snapshot', patterns = {'["\']?snapshot["\']?%s*%+?(%d+)'} },
     { stat = 'Song Effect Duration', patterns = {'["\']?song effect duration["\']?%s*%+?(%d+)%%?'} },
@@ -229,7 +232,7 @@ local stat_sequence = {
     { stat = 'Step duration', patterns = {'["\']?step["\']? duration%s*%+?(%d+)'} },
     { stat = 'Stoneskin', patterns = {'["\']?stoneskin["\']?%s*%+?(%d+)'} },
 	{ stat = 'Stoneskin casting time', patterns = {'["\']?stoneskin["\']? casting time%s*([%+%-]?%d+)%%?'} },
-    { stat = 'Store TP', patterns = {'["\']?store tp["\']?%s*%+?(%d+)'} },
+    { stat = 'Store TP', patterns = {'store[^%w]+tp[^%d]*([%+%-]?%s*%d+)'} },
     { stat = 'STR', patterns = {'["\']?str["\']?%s*%+?(%d+)'} },
 	{ stat = 'String Instrument Skill', patterns = {'["\']?string instrument skill["\']?%s*%+?(%d+)'} },
     { stat = 'Subtle Blow', patterns = {'["\']?subtle blow["\']?%s*%+?(%d+)'} },
@@ -239,8 +242,8 @@ local stat_sequence = {
     { stat = 'TP during evasion', patterns = {'tp during evasion%s*%+?(%d+)'} },
     { stat = 'TP Gained when landing critical hits', patterns = {'tp gained when landing critical hits%s*%+?(%d+)'} },
     { stat = 'Treasure Hunter', patterns = {'["\']?treasure hunter["\']?%s*%+?(%d+)', '%s+th%s*%+?(%d+)', '^th%s*%+?(%d+)'} },
-    { stat = 'Triple Attack', patterns = {'["\']?triple attack["\']?%s*%+?(%d+)%%?', '["\']?tri%.%s*atk%.["\']?%s*%+?(%d+)%%?'} },
-    { stat = 'Triple Attack Damage', patterns = {'["\']?triple attack["\']? damage%s*%+?(%d+)', '["\']?triple attack dmg%.["\']?%s*%+?(%d+)'} },
+    { stat = 'Triple Attack', patterns = {'triple%s+attack[^%d%+%-]*[%+%-]?%s*(%d+)%%?', 'tri%.%s*atk%.[^%d%+%-]*[%+%-]?%s*(%d+)%%?'} },
+    { stat = 'Triple Attack Damage', patterns = {'triple[^%w]+attack[^%w]+damage.-([%+%-]?%s*%d+)', 'triple[^%w]+attack[^%w]+dmg%..-([%+%-]?%s*%d+)'} },
     { stat = 'Triple Shot', patterns = {'["\']?triple shot["\']?%s*%+?(%d+)%%?'} },
     { stat = 'Triple Shot Damage', patterns = {'["\']?triple shot["\']? damage%s*%+?(%d+)', '["\']?triple shot dmg%.["\']?%s*%+?(%d+)'} },
     { stat = 'True Shot', patterns = {'["\']?true shot["\']?%s*%+?(%d+)'} },
@@ -248,7 +251,7 @@ local stat_sequence = {
     { stat = 'Vivacious Pulse potency', patterns = {'["\']?vivacious pulse["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Waltz Potency', patterns = {'["\']?waltz["\']? potency%s*%+?(%d+)%%?'} },
     { stat = 'Weapon Skill Accuracy', patterns = {'["\']?weapon skill accuracy["\']?%s*%+?(%d+)'} },
-    { stat = 'Weapon Skill Damage', patterns = {'["\']?weapon skill damage["\']?%s*%+?(%d+)%%?'} },
+    { stat = 'Weapon Skill Damage', patterns = {'weapon[^%w]+skill[^%w]+damage[^%d]*([%+%-]?%s*%d+)%%?'} },
     { stat = 'Wind Instrument Skill', patterns = {'["\']?wind instrument skill["\']?%s*%+?(%d+)'} },
 	{ stat = 'Wyvern: Damage Taken', patterns = {'wyvern:%s*damage taken%s*([%+%-]?%d+)%%?'} },
     { stat = 'Wyvern: HP', patterns = {'wyvern:%s*hp%s*%+?(%d+)'} },
@@ -442,67 +445,79 @@ local function calculate_gear_stats()
                 for _, text_line in ipairs(strings_to_parse) do
                     local current_line = text_line:lower() 
                     
-                    -- PRE-PROCESSOR: Prevent overlapping text replacements using safe tokens
-                    if current_line:find("pet:") then
-                        current_line = current_line:gsub("pet:%s*", "")
-                        
-                        -- 1. Convert to temporary safe tokens (Longest words first!)
-                        current_line = current_line:gsub("magic evasion", "PET_MEVA")
-                        current_line = current_line:gsub("mag%.%s*eva%.", "PET_MEVA")
-                        current_line = current_line:gsub("ranged accuracy", "PET_RACC")
-                        current_line = current_line:gsub("rng%.%s*acc%.", "PET_RACC")
-                        current_line = current_line:gsub("magic accuracy", "PET_MACC")
-                        current_line = current_line:gsub("mag%.%s*acc%.", "PET_MACC")
-                        current_line = current_line:gsub("ranged attack", "PET_RATK")
-                        current_line = current_line:gsub("rng%.%s*atk%.", "PET_RATK")
-                        current_line = current_line:gsub("accuracy", "PET_ACC")
-                        current_line = current_line:gsub("acc%.", "PET_ACC")
-                        current_line = current_line:gsub("attack", "PET_ATK")
-                        current_line = current_line:gsub("atk%.", "PET_ATK")
-                        current_line = current_line:gsub("evasion", "PET_EVA")
-                        current_line = current_line:gsub("eva%.", "PET_EVA")
-                        current_line = current_line:gsub("damage taken", "PET_DT")
-                        current_line = current_line:gsub("dmg:", "PET_DMG")
-                        current_line = current_line:gsub("all attr%.", "PET_ATTR")
-                        
-                        -- 2. Convert tokens back to explicit pet patterns
-                        current_line = current_line:gsub("PET_MEVA", "pet: magic evasion")
-                        current_line = current_line:gsub("PET_RACC", "pet: ranged accuracy")
-                        current_line = current_line:gsub("PET_MACC", "pet: magic accuracy")
-                        current_line = current_line:gsub("PET_RATK", "pet: ranged attack")
-                        current_line = current_line:gsub("PET_ACC", "pet: accuracy")
-                        current_line = current_line:gsub("PET_ATK", "pet: attack")
-                        current_line = current_line:gsub("PET_EVA", "pet: evasion")
-                        current_line = current_line:gsub("PET_DT", "pet: damage taken")
-                        current_line = current_line:gsub("PET_DMG", "pet: dmg:")
-                        current_line = current_line:gsub("PET_ATTR", "pet: all attr.")
-                        
-                    elseif current_line:find("automaton:") then
-                        current_line = current_line:gsub("automaton:%s*", "")
-                        
-                        current_line = current_line:gsub("magic accuracy", "AUTO_MACC")
-                        current_line = current_line:gsub("mag%.%s*acc%.", "AUTO_MACC")
-                        current_line = current_line:gsub("ranged accuracy", "AUTO_RACC")
-                        current_line = current_line:gsub("r%.%s*acc%.", "AUTO_RACC")
-                        current_line = current_line:gsub("rng%.%s*acc%.", "AUTO_RACC")
-                        current_line = current_line:gsub("accuracy", "AUTO_ACC")
-                        current_line = current_line:gsub("acc%.", "AUTO_ACC")
-                        
-                        current_line = current_line:gsub("AUTO_MACC", "automaton: magic accuracy")
-                        current_line = current_line:gsub("AUTO_RACC", "automaton: r. acc.")
-                        current_line = current_line:gsub("AUTO_ACC", "automaton: accuracy")
-                        
-                    elseif current_line:find("avatar:") then
-                        current_line = current_line:gsub("avatar:%s*", "")
-                        
-                        current_line = current_line:gsub("magic accuracy", "AVA_MACC")
-                        current_line = current_line:gsub("mag%.%s*acc%.", "AVA_MACC")
-                        current_line = current_line:gsub("accuracy", "AVA_ACC")
-                        current_line = current_line:gsub("acc%.", "AVA_ACC")
-                        
-                        current_line = current_line:gsub("AVA_MACC", "avatar: magic accuracy")
-                        current_line = current_line:gsub("AVA_ACC", "avatar: accuracy")
+                    -- PRE-PROCESSOR: Isolate companion stats from player stats
+                    local player_line = current_line
+                    
+                    -- Ignore specific weapon skill modifiers
+                    player_line = player_line:gsub("weapon skill: attack bonus.-upgrades", "")
+                    player_line = player_line:gsub("weapon skill %w+ %+%d+%%?", "")
+                    
+                    local comp_line = ""
+                    
+                    local split_idx = current_line:find("pet:") or current_line:find("automaton:") or current_line:find("avatar:")
+                    if split_idx then
+                        player_line = current_line:sub(1, split_idx - 1)
+                        comp_line = current_line:sub(split_idx)
                     end
+                    
+                    if comp_line:find("pet:") then
+                        comp_line = comp_line:gsub("pet:%s*", "")
+                        comp_line = comp_line:gsub("magic evasion", "PET_MEVA")
+                        comp_line = comp_line:gsub("mag%.%s*eva%.", "PET_MEVA")
+                        comp_line = comp_line:gsub("ranged accuracy", "PET_RACC")
+                        comp_line = comp_line:gsub("ranged acc%.", "PET_RACC")
+                        comp_line = comp_line:gsub("rng%.%s*acc%.", "PET_RACC")
+                        comp_line = comp_line:gsub("magic accuracy", "PET_MACC")
+                        comp_line = comp_line:gsub("magic acc%.", "PET_MACC")
+                        comp_line = comp_line:gsub("ranged attack", "PET_RATK")
+                        comp_line = comp_line:gsub("rng%.%s*atk%.", "PET_RATK")
+                        comp_line = comp_line:gsub("accuracy", "PET_ACC")
+                        comp_line = comp_line:gsub("acc%.", "PET_ACC")
+                        comp_line = comp_line:gsub("attack", "PET_ATK")
+                        comp_line = comp_line:gsub("atk%.", "PET_ATK")
+                        comp_line = comp_line:gsub("evasion", "PET_EVA")
+                        comp_line = comp_line:gsub("eva%.", "PET_EVA")
+                        comp_line = comp_line:gsub("damage taken", "PET_DT")
+                        comp_line = comp_line:gsub("dmg:", "PET_DMG")
+                        comp_line = comp_line:gsub("all attr%.", "PET_ATTR")
+                        
+                        comp_line = comp_line:gsub("PET_MEVA", "pet: magic evasion")
+                        comp_line = comp_line:gsub("PET_RACC", "pet: ranged accuracy")
+                        comp_line = comp_line:gsub("PET_MACC", "pet: magic accuracy")
+                        comp_line = comp_line:gsub("PET_RATK", "pet: ranged attack")
+                        comp_line = comp_line:gsub("PET_ACC", "pet: accuracy")
+                        comp_line = comp_line:gsub("PET_ATK", "pet: attack")
+                        comp_line = comp_line:gsub("PET_EVA", "pet: evasion")
+                        comp_line = comp_line:gsub("PET_DT", "pet: damage taken")
+                        comp_line = comp_line:gsub("PET_DMG", "pet: dmg:")
+                        comp_line = comp_line:gsub("PET_ATTR", "pet: all attr.")
+                        
+                    elseif comp_line:find("automaton:") then
+                        comp_line = comp_line:gsub("automaton:%s*", "")
+                        comp_line = comp_line:gsub("magic accuracy", "AUTO_MACC")
+                        comp_line = comp_line:gsub("mag%.%s*acc%.", "AUTO_MACC")
+                        comp_line = comp_line:gsub("ranged accuracy", "AUTO_RACC")
+                        comp_line = comp_line:gsub("r%.%s*acc%.", "AUTO_RACC")
+                        comp_line = comp_line:gsub("rng%.%s*acc%.", "AUTO_RACC")
+                        comp_line = comp_line:gsub("accuracy", "AUTO_ACC")
+                        comp_line = comp_line:gsub("acc%.", "AUTO_ACC")
+                        
+                        comp_line = comp_line:gsub("AUTO_MACC", "automaton: magic accuracy")
+                        comp_line = comp_line:gsub("AUTO_RACC", "automaton: r. acc.")
+                        comp_line = comp_line:gsub("AUTO_ACC", "automaton: accuracy")
+                        
+                    elseif comp_line:find("avatar:") then
+                        comp_line = comp_line:gsub("avatar:%s*", "")
+                        comp_line = comp_line:gsub("magic accuracy", "AVA_MACC")
+                        comp_line = comp_line:gsub("mag%.%s*acc%.", "AVA_MACC")
+                        comp_line = comp_line:gsub("accuracy", "AVA_ACC")
+                        comp_line = comp_line:gsub("acc%.", "AVA_ACC")
+                        
+                        comp_line = comp_line:gsub("AVA_MACC", "avatar: magic accuracy")
+                        comp_line = comp_line:gsub("AVA_ACC", "avatar: accuracy")
+                    end
+
+                    current_line = player_line .. " " .. comp_line
 
                     -- HARD-CODED ITEM FIXES FOR MULTI-LINE COMPANION STATS
                     -- Murky Ring (ID: 26234) splits Pet stats across 3 lines without prefixes
@@ -933,6 +948,57 @@ local function validate_stat_keys()
 end
 
 -- ==============================================================================
+-- Export Gear Data
+-- ==============================================================================
+local function export_gear(mode)
+    local file_path = mode == 'log' and 'data/export_log.txt' or 'data/export.txt'
+    local file = io.open(windower.addon_path .. file_path, 'w')
+    if not file then return end
+    
+    local equipment = windower.ffxi.get_items().equipment
+    local _, item_details = calculate_gear_stats()
+    
+    for _, slot in ipairs(equip_slots) do
+        local item_index = equipment[slot]
+        if item_index ~= 0 then
+            local bag = equipment[slot .. '_bag']
+            local item = windower.ffxi.get_items(bag, item_index)
+            if item and item.id > 0 then
+                local name = res.items[item.id] and res.items[item.id].en or "Unknown"
+                file:write("Slot: " .. slot .. " | Item: " .. name .. "\n")
+                
+                if mode == 'log' then
+                    local detail = item_details[slot]
+                    if detail then
+                        if detail.missing then file:write("WARNING: MISSING DB DATA\n") end
+                        for _, s in ipairs(stat_sequence) do
+                            if detail.stats[s.stat] then 
+                                file:write("  - " .. s.stat .. ": " .. detail.stats[s.stat] .. "\n")
+                            end
+                        end
+                    else
+                        file:write("  No tracked stats.\n")
+                    end
+                else
+                    local base_desc = res.item_descriptions[item.id]
+                    if base_desc and base_desc.en then
+                        local flat = string.gsub(base_desc.en, "[\r\n]+", " ")
+                        file:write("Flat Desc: " .. flat .. "\n")
+                    end
+                    local decoded = extdata.decode(item)
+                    if decoded and type(decoded.augments) == 'table' then
+                        file:write("Augments: " .. table.concat(decoded.augments, ", ") .. "\n")
+                    end
+                end
+                file:write("----------------------------------------\n")
+            end
+        end
+    end
+    file:close()
+    windower.add_to_chat(207, 'GearInfo-Mod: Exported to ' .. file_path)
+end
+
+-- ==============================================================================
 -- Addon Commands & Help Menu
 -- ==============================================================================
 windower.register_event('addon command', function(command, ...)
@@ -942,6 +1008,9 @@ windower.register_event('addon command', function(command, ...)
         update_ui()
         hide_next_checkparam = true
         windower.send_command('checkparam <me>')
+    elseif command == 'export' then
+        local arg = select(1, ...)
+        export_gear(arg)
     elseif command == 'log' then
         show_log = not show_log
         if show_log then log_display:show() else log_display:hide() end
@@ -996,18 +1065,21 @@ windower.register_event('addon command', function(command, ...)
             windower.add_to_chat(207, 'GearInfo: Usage: //gim style [horizontal|vertical]')
         end
     elseif command == 'help' then
-        windower.add_to_chat(207, ' --- GearInfo-Mod v1.6.0 Help ---')
+        windower.add_to_chat(207, ' --- GearInfo-Mod v1.6.1 Help ---')
         windower.add_to_chat(207, ' //gim refresh          : Manually refreshes UI and pulls new character stats.')
         windower.add_to_chat(207, ' //gim base             : Toggles the Base Stats (STR/DEX/etc.) UI window.')
         windower.add_to_chat(207, ' //gim ghost save       : Saves a snapshot of your current stats to compare against.')
         windower.add_to_chat(207, ' //gim ghost clear      : Deletes your saved Ghost Gear snapshot.')
         windower.add_to_chat(207, ' //gim ghost toggle     : Hides or shows your Ghost Gear display.')
         windower.add_to_chat(207, ' //gim log              : Toggles the detailed item breakdown log.')
+        windower.add_to_chat(207, ' //gim export           : Dumps raw item descriptions and extdata to data/export.txt')
+        windower.add_to_chat(207, ' //gim export log       : Dumps parsed UI stats and warnings to data/export_log.txt')
         windower.add_to_chat(207, ' //gim hide             : Hides the Gear Statistics UI completely.')
         windower.add_to_chat(207, ' //gim show             : Shows the Gear Statistics UI.')
         windower.add_to_chat(207, ' //gim style horizontal : Changes the UI to a side-by-side layout.')
         windower.add_to_chat(207, ' //gim style vertical   : Changes the UI back to a stacked layout.')
-        windower.add_to_chat(207, ' //gim help or //gim     : Displays this help menu.')
+        windower.add_to_chat(207, ' //gim validate         : Debug tool to scan database keys against the UI dictionary.')
+        windower.add_to_chat(207, ' //gim help or //gim    : Displays this help menu.')
         windower.add_to_chat(207, ' Note: You can click and drag the UI windows anywhere on your screen!')
     elseif command == 'validate' then
         validate_stat_keys()
