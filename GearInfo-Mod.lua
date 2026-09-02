@@ -199,7 +199,7 @@ local stat_sequence = {
     { stat = 'Phantom Roll duration', patterns = {'["\']?phantom roll["\']? effect duration%s*%+?(%d+)'} },
     { stat = 'Phantom Roll XI HP/MP', patterns = {'["\']?phantom roll xi["\']?: recover hp and mp%s*%+?(%d+)%%?'} },
     { stat = 'Physical Damage Limit', patterns = {'["\']?physical damage limit["\']?%s*%+?(%d+)%%?', '["\']?pdl["\']?%s*%+?(%d+)%%?'} },
-    { stat = 'Physical Damage Taken', patterns = {'physical[^%w]+damage[^%w]+taken[^i%d]*([%+%-]?%s*%d+)%%?', 'phys%.%s*dmg%.%s*taken[^i%d]*([%+%-]?%s*%d+)%%?', 'pdt[^i%d]*([%+%-]?%s*%d+)%%?'} },
+    { stat = 'Physical Damage Taken', patterns = {'physical[^%w]+damage[^%w]+taken[^i%dconverts]*([%+%-]?%s*%d+)%%?', 'phys%.%s*dmg%.%s*taken[^i%dconverts]*([%+%-]?%s*%d+)%%?', 'pdt[^i%dconverts]*([%+%-]?%s*%d+)%%?'} },
 	{ stat = 'Physical Damage Taken II', patterns = {'physical[^%w]+damage[^%w]+taken[^%w]+ii[^%d]*([%+%-]?%s*%d+)%%?', 'phys%.%s*dmg%.%s*taken[^%w]+ii[^%d]*([%+%-]?%s*%d+)%%?', 'pdt[^%w]+ii[^%d]*([%+%-]?%s*%d+)%%?'} },
     { stat = 'Quadruple Attack', patterns = {'quadruple%s+attack[^%d%+%-]*[%+%-]?%s*(%d+)%%?', 'quad%.%s*atk%.[^%d%+%-]*[%+%-]?%s*(%d+)%%?'} },
     { stat = 'Quick Magic', patterns = {'["\']?quick magic["\']?%s*%+?(%d+)%%?'} },
