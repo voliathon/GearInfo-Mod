@@ -1,4 +1,6 @@
--- /data/odyssey.lua
+-- GearInfo-Mod for Final Fantasy XI
+-- Copyright (c) 2026 Voliathon. All rights reserved.
+-- Licensed under custom terms. See LICENSE file in the root directory.
 -- Contains explicit path and rank data for perfect accuracy.
 
 -- MUST BE DECLARED AT THE VERY TOP

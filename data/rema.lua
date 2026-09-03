@@ -1,4 +1,6 @@
--- /data/rema.lua
+-- GearInfo-Mod for Final Fantasy XI
+-- Copyright (c) 2026 Voliathon. All rights reserved.
+-- Licensed under custom terms. See LICENSE file in the root directory.
 local rema_tables = {}
 for i = 1, 30 do rema_tables[i] = {} end
 

@@ -1,4 +1,6 @@
--- /data/divergence.lua
+-- GearInfo-Mod for Final Fantasy XI
+-- Copyright (c) 2026 Voliathon. All rights reserved.
+-- Licensed under custom terms. See LICENSE file in the root directory.
 local divergence_tables = {}
 for i = 1, 30 do divergence_tables[i] = {} end
 

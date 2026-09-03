@@ -1,4 +1,6 @@
--- /data/jse.lua
+-- GearInfo-Mod for Final Fantasy XI
+-- Copyright (c) 2026 Voliathon. All rights reserved.
+-- Licensed under custom terms. See LICENSE file in the root directory.
 local jse_tables = {}
 for i = 1, 30 do jse_tables[i] = {} end
 

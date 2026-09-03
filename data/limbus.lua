@@ -1,4 +1,6 @@
--- /data/limbus.lua
+-- GearInfo-Mod for Final Fantasy XI
+-- Copyright (c) 2026 Voliathon. All rights reserved.
+-- Licensed under custom terms. See LICENSE file in the root directory.
 -- Contains rank 1-30 augment tables for Limbus armor, weapons, and accessories.
 
 local limbus_tables = {}

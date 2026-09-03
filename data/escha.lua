@@ -1,4 +1,6 @@
--- /data/escha.lua
+-- GearInfo-Mod for Final Fantasy XI
+-- Copyright (c) 2026 Voliathon. All rights reserved.
+-- Licensed under custom terms. See LICENSE file in the root directory.
 local escha_tables = {}
 for i = 1, 30 do escha_tables[i] = {} end
 
