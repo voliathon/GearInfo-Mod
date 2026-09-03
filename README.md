@@ -1,4 +1,4 @@
-# GearInfo-Mod - Last updated September 2nd 2026
+# GearInfo-Mod - Last updated September 3rd 2026
 
 **🚨 IMPORTANT: NOT THE LEGACY GEARINFO 🚨**  
 *This is a completely rebuilt, standalone addon. It is designed to safely replace or run alongside the old, legacy "GearInfo" without breaking your existing GearSwap Luas. Legacy GearSwap files that heavily hardcoded the old addon will not crash or conflict, because this version uses a completely isolated folder (`GearInfo-Mod`) and command structure (`//gim`).*
@@ -67,6 +67,7 @@ Type the following into your FFXI chat log:
 9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~ DONE 7/28/2026
 10. ~~Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)~~ DONE 7/30/2026
 11. ~~Overhauled Regex parsing engine for stat matching (fixed Odyssey/Bunzi gear), resolved Pet stat bleeding, and added dual-export tools.~~ DONE 9/2/2026
+12. ~~Compartmentalized Code and I threw a proper copyright at it.  Also made modifications to /checkparam ~~DONE 9/3/2026
 
 ## Usage
 1. Create a folder in addons called `GearInfo-Mod`

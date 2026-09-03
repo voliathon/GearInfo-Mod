@@ -1,0 +1,42 @@
+================================================================================
+                               GearInfo-Mod
+================================================================================
+
+Copyright © 2026 Voliathon. All rights reserved.
+
+--------------------------------------------------------------------------------
+1. TERMS OF USE
+--------------------------------------------------------------------------------
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to use 
+and run the Software for personal, non-commercial purposes, subject to the 
+following conditions:
+
+  * No Derivatives or Redistribution: 
+    The Software may not be modified, sublicensed, redistributed, or sold 
+    without the express written permission of the copyright holder.
+
+  * AI and Machine Learning Restriction: 
+    The Software, its source code, documentation, and any associated data may 
+    not be used, scraped, or harvested for the purposes of training, tuning, 
+    or developing artificial intelligence (AI), machine learning (ML), large 
+    language models (LLMs), neural networks, or any similar automated data 
+    processing technologies.
+
+  * Data Mining Restriction: 
+    Automated scraping, data mining, or extraction of the source code or assets 
+    for any purpose other than executing the Software as intended is strictly 
+    prohibited.
+
+--------------------------------------------------------------------------------
+2. DISCLAIMER OF WARRANTY & LIMITATION OF LIABILITY
+--------------------------------------------------------------------------------
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+DEALINGS IN THE SOFTWARE.
+================================================================================
