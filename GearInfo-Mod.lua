@@ -125,14 +125,14 @@ windower.register_event('prerender', function()
     if pending_checkparam > 0 and now > pending_checkparam then
         pending_checkparam = 0
         hide_next_checkparam = true
-        windower.send_command('checkparam <me>')
+        windower.send_command('@input /checkparam <me>')
     end
 end)
 
 windower.register_event('load', 'login', 'zone change', function()
     update_ui()
     hide_next_checkparam = true
-    windower.send_command('checkparam <me>')
+    windower.send_command('@input /checkparam <me>')
 end)
 
 windower.register_event('incoming text', function(original, modified, original_mode, modified_mode, blocked)
