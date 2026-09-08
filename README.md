@@ -1,4 +1,4 @@
-# GearInfo-Mod - Last updated September 3rd 2026
+# GearInfo-Mod - Last updated September 8th 2026
 
 **🚨 IMPORTANT: NOT THE LEGACY GEARINFO 🚨**  
 *This is a completely rebuilt, standalone addon. It is designed to safely replace or run alongside the old, legacy "GearInfo" without breaking your existing GearSwap Luas. Legacy GearSwap files that heavily hardcoded the old addon will not crash or conflict, because this version uses a completely isolated folder (`GearInfo-Mod`) and command structure (`//gim`).*
@@ -9,7 +9,29 @@ This version of GearInfo-Mod is a lightweight Windower addon designed to track a
 
 **You will NOT need to incorporate this into GearSwap. This is stand-alone.**
 
-I was also limited to the data on bg-wiki.  `//gim log` will be your friend to verify if something is missing
+I was also limited to the data on bg-wiki.  `//gim log` will be your friend to verify if something is missing.
+
+---
+
+## 🛑 THE "/checkparam" MENU LIMITATION (PLEASE READ) 🛑
+
+GearInfo-Mod calculates your **Green Gear Stats** instantly using local files, but relies on the game's native `/checkparam` command to fetch your **White Total Character Stats**. 
+
+**Final Fantasy XI strictly forbids the `/checkparam` command from executing while a full-screen menu (like the Equipment Menu) is open.**
+
+If you swap gear while your Equipment Menu is open:
+1. Your green gear stats will update immediately.
+2. The game will block the addon from fetching your new totals, generating a hidden error: *"You must close the currently open window to use that command."*
+3. The addon will silently wait in the background. **Your white total stats will NOT update until you close the menu.** 
+
+**To correctly use the Ghost Gear comparison tool:**
+1. Equip your first gear set.
+2. **Close all menus** so you are standing normally in the game world.
+3. Type `//gim ghost save` to capture the snapshot.
+4. Open your menu and swap to your second gear set.
+5. **Close the menu again** to allow the addon to fetch your new true totals and accurately display the `▲` / `▼` comparison!
+
+---
 
 ## Features
 * **Dynamic Parsing:** Automatically detects stats from base gear and custom augments (Oseem, Odyssey, etc.) using real-time game data. I handle complex augment strings and prevents double-counting of stats (e.g., differentiating between "Accuracy" and "Magic Accuracy").
@@ -46,8 +68,9 @@ Type the following into your FFXI chat log:
 | `//gim ghost clear` | Deletes your saved Ghost Gear snapshot. |
 | `//gim ghost toggle` | Hides or shows your Ghost Gear display. |
 | `//gim log` | Toggles the visibility of the 3-column detailed item breakdown log. |
-| `//gim export` | Dumps raw item descriptions and extdata to data/export.txt for debugging. |
-| `//gim export log` | Dumps parsed UI stats and warnings to data/export_log.txt. |
+| `//gim export` | Dumps raw item descriptions and extdata to data/logs/export.txt for debugging. |
+| `//gim export log` | Dumps parsed UI stats and warnings to data/logs/export_log.txt. |
+| `//gim export ghost` | Dumps the currently saved Ghost stats memory block to data/logs/export_ghost.txt. |
 | `//gim hide` | Hides the Gear Statistics UI completely. |
 | `//gim show` | Shows the Gear Statistics UI. |
 | `//gim style horizontal` | Changes the UI to a side-by-side layout. |
@@ -66,19 +89,20 @@ Type the following into your FFXI chat log:
 8. ~~Add Part 1 of Escha~~ DONE on 7/27/2026
 9. ~~Add misc stuff like Brutal Earring. Statless descriptions in the gear. ie Enhances "Fast Cast" effect~~ DONE 7/28/2026
 10. ~~Add Part 2 of Escha (Oboro, Weapons, Zi'tah Augments)~~ DONE 7/30/2026
-11. ~~Overhauled Regex parsing engine for stat matching (fixed Odyssey/Bunzi gear), resolved Pet stat bleeding, and added dual-export tools.~~ DONE 9/2/2026
-12. ~~Compartmentalized Code and I threw a proper copyright at it.  Also made modifications to /checkparam.~~ DONE 9/3/2026
+11. ~~Overhauled Regex parsing engine for indestructible stat matching, resolved Pet stat bleeding, and added dual-export tools.~~ DONE 9/2/2026
+12. ~~Fully modularized codebase (separated Parser, UI Renderer, Debugger, and Stat Dictionary into isolated classes) for extreme performance.~~ DONE 9/8/2026
 
 ## Usage
 1. Create a folder in addons called `GearInfo-Mod`
 2. Drop all of the files downloaded in this repo into `GearInfo-Mod` 
-3. From within the game in order to load the addon: `//lua load GearInfo-Mod`
-4. Type `//gim` for commands but `//gim show` is the meat and potatoes
-5. **Click and drag** any window to move it where you prefer. Your layout is saved automatically.
-6. When you swap gear, the addon will detect the equipment change and update the stats automatically.
-7. If you want to see the breakdown of which items provide which stats, use `//gim log`.
-8. Use the `//gim ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats.
-9. Use the `//gim export` and `//gim export log` commands to troubleshoot missing stats if an item isn't parsing correctly.
+3. **IMPORTANT:** Create two empty folders named `logs` and `settings` inside the `GearInfo-Mod/data/` folder before launching!
+4. From within the game in order to load the addon: `//lua load GearInfo-Mod`
+5. Type `//gim` for commands but `//gim show` is the meat and potatoes
+6. **Click and drag** any window to move it where you prefer. Your layout is saved automatically.
+7. When you swap gear, the addon will detect the equipment change and update the stats automatically.
+8. If you want to see the breakdown of which items provide which stats, use `//gim log`.
+9. Use the `//gim ghost save` command before testing a new set to easily see exactly what you gain or lose across all stats (Remember to close your menus!).
+10. Use the `//gim export` and `//gim export log` commands to troubleshoot missing stats if an item isn't parsing correctly.
 
 ## Technical Note
 GearInfo-Mod calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently polling the game's `/checkparam` function whenever equipment is changed, ensuring you have an accurate view of your total combat performance. To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. 
