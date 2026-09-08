@@ -17,12 +17,14 @@ I was also limited to the data on bg-wiki.  `//gim log` will be your friend to v
 
 GearInfo-Mod calculates your **Green Gear Stats** instantly using local files, but relies on the game's native `/checkparam` command to fetch your **White Total Character Stats**. 
 
-**Final Fantasy XI strictly forbids the `/checkparam` command from executing while a full-screen menu (like the Equipment Menu) is open.**
+**Why `/checkparam`?** Extensive analysis of FFXI's network traffic confirms that the game **does not** transmit your total Attack, Accuracy, Defense, or Evasion via any known packets. The server only sends Base Stats (STR, DEX, etc.), leaving your client to calculate combat totals locally in RAM. Because local memory readers frequently fail to calculate complex external buffs correctly (like GEO bubbles, COR rolls, or specific food), forcing a `/checkparam` ping is the *only* way to guarantee 100% accurate, server-verified combat totals.
+
+**The Limitation:** Final Fantasy XI strictly forbids the `/checkparam` command from executing while a full-screen menu (like the Equipment Menu) is open.
 
 If you swap gear while your Equipment Menu is open:
 1. Your green gear stats will update immediately.
 2. The game will block the addon from fetching your new totals, generating a hidden error: *"You must close the currently open window to use that command."*
-3. The addon will silently wait in the background. **Your white total stats will NOT update until you close the menu.** 
+3. The addon will silently intercept this error and wait in the background. **Your white total stats will NOT update until you close the menu.** 
 
 **To correctly use the Ghost Gear comparison tool:**
 1. Equip your first gear set.
@@ -105,7 +107,7 @@ Type the following into your FFXI chat log:
 10. Use the `//gim export` and `//gim export log` commands to troubleshoot missing stats if an item isn't parsing correctly.
 
 ## Technical Note
-GearInfo-Mod calculates gear stats by parsing item descriptions and encrypted `extdata`. It calculates true character totals by silently polling the game's `/checkparam` function whenever equipment is changed, ensuring you have an accurate view of your total combat performance. To prevent server desync, it utilizes a Two-Stage Injection System: green gear stats are calculated instantly locally, followed by a 1.2-second delay before pinging `/checkparam` to allow the FFXI servers to catch up to your gear swap. 
+GearInfo-Mod calculates gear stats locally by parsing item descriptions and encrypted `extdata`. To calculate true character totals (Accuracy, Attack, Evasion, Defense), it utilizes a Two-Stage Injection System. Because there are no known packets that contain total combat stats, the addon silently intercepts the game's `/checkparam` text output. Green gear stats are calculated instantly, followed by a smart delay that waits for you to close any open menus before pinging `/checkparam` to prevent chat spam and server desync.
 
 ## Special Thanks
 Thanks Zedoma and Navius for testing and giving me feedback for gear. The ghost idea came from Navius and I ran with it.
